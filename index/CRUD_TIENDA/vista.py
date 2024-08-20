@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 
 class Interfaz:
-    def __init__(self,objControlador):
+    def __init__(self):
         self.nombreUsuario=None
         self.documentoUsuario=None
         self.objControlador=None
@@ -49,32 +49,65 @@ class Interfaz:
             messagebox.showerror("Error","Los campos deben ser llenados correctamente")
             
     def ventanaHome(self):
-        ventanaTienda=tk.Tk
-        ventanaTienda.config(width=900,height=900)
+        ventanaTienda=tk.Tk()
+        ventanaTienda.config(width=1200,height=1200)
         ventanaTienda.title("DROGUERIA HAYBET SALUD")
         
         frameEncabezado=tk.Frame(ventanaTienda)
-        frameEncabezado.config(width=800,height=200)
-        frameEncabezado.pack(pady=10)
+        frameEncabezado.config(bg="#98c3a1")
+        frameEncabezado.pack(padx=10,pady=10)
         frameSecciones=tk.Frame(frameEncabezado)
-        frameSecciones.pack(padx=5)
+        frameSecciones.config(bg="#75c9a3")
+        frameSecciones.grid(column=0,row=0)
+        home=tk.Button(frameSecciones)
+        home.grid(column=0,row=0,sticky="s")
+        labelHome=tk.Label(home, text="Home")
+        labelHome.pack()
+        products=tk.Button(frameSecciones)
+        products.grid(column=1,row=0,sticky="s")
+        labelProducts=tk.Label(products,text="Products")
+        labelProducts.pack()
+        about=tk.Button(frameSecciones)
+        about.grid(column=2,row=0,sticky="s")
+        labelAbout=tk.Label(about,text="About")
+        labelAbout.pack()
+        contact=tk.Button(frameSecciones)
+        contact.grid(column=3,row=0,sticky="s")
+        labelContact=tk.Label(contact,text="Contact")
+        labelContact.pack()
         frameTituloEmpresa=tk.Frame(frameEncabezado)
-        frameTituloEmpresa.pack(padx=5)
-        frameImagen=tk.Frame(frameEncabezado)
-        frameImagen.pack(padx=5)
+        frameTituloEmpresa.config(bg="#75c9a3")
+        frameTituloEmpresa.grid(column=1,row=0)
+        nombre=tk.Label(frameTituloEmpresa, text="DROGUERIA HAYBET")
+        nombre.config(width=15,height=8)
+        nombre.pack()
+        frameImagenEncabezado=tk.Frame(frameEncabezado)
+        frameImagenEncabezado.config(bg="#75c9a3")
+        frameImagenEncabezado.grid(column=2,row=0)
+        imagen=tk.Label(frameImagenEncabezado,text="Imagen")
+        imagen.pack()
         
         frameContenido=tk.Frame(ventanaTienda)
-        frameContenido.config(width=800,height=550)
+        frameContenido.config(width=800,height=550,bg="#25857d")
         frameContenido.pack(pady=10)
         frameLateral=tk.Frame(frameContenido)
         frameLateral.pack(pady=10,padx=20)
-        #crear cada uno de las secciones que aparecen en el mockup
+        labelLateral=tk.Label(frameLateral, text="lateral")
+        labelLateral.pack()
         frameCategorias=tk.Frame(frameContenido)
         frameCategorias.pack(pady=10)
+        labelCategorias=tk.Label(frameCategorias, text="Categorias")
+        labelCategorias.pack()
         frameProductos=tk.Frame(frameContenido)
         frameProductos.pack(pady=5)
         frmTituloCatalogo=tk.Frame(frameProductos)
-        frmTituloCatalogo.pack(padx=10,pady=10)
+        frmTituloCatalogo.pack(padx=5,pady=5)
+        labelTituloCatalogo=tk.Label(frmTituloCatalogo,text="TITULO DE CATALOGO")
+        labelTituloCatalogo.pack()
+        frmContenidoProductos=tk.Frame(frameProductos)
+        frmContenidoProductos.pack()
+        labelContenidoProductos=tk.Label(frmContenidoProductos, text="CONTENIDO")
+        labelContenidoProductos.pack()
         #ahora averiguar si toca hacer un frame por cada producto.
         
         framePiePagina=tk.Frame(ventanaTienda)
@@ -84,5 +117,13 @@ class Interfaz:
         
         #falta crear la interfaz de informe de productos
         #tambien hay que hacer dos interfaces(administrador,cliente)
+        
+    def activar_mainloop(self):
+        tk.mainloop()
+        
+
+Ventana=Interfaz()
+Ventana.ventanaHome()
+Ventana.activar_mainloop()
         
         
