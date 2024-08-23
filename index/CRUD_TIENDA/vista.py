@@ -53,9 +53,13 @@ class Interfaz:
         ventanaTienda.config(width=1200,height=1200)
         ventanaTienda.title("DROGUERIA HAYBET SALUD")
         
-        frameEncabezado=tk.Frame(ventanaTienda)
+        framePrincipal=tk.Frame(ventanaTienda)
+        framePrincipal.config(bg="#80b380")
+        framePrincipal.pack(expand=True, fill="both")
+        
+        frameEncabezado=tk.Frame(framePrincipal)
         frameEncabezado.config(bg="#98c3a1")
-        frameEncabezado.pack(padx=10,pady=10)
+        frameEncabezado.pack(padx=10,pady=10, expand=True, fill="both")
         frameSecciones=tk.Frame(frameEncabezado)
         frameSecciones.config(bg="#75c9a3")
         frameSecciones.grid(column=0,row=0)
@@ -87,9 +91,9 @@ class Interfaz:
         imagen=tk.Label(frameImagenEncabezado,text="Imagen")
         imagen.pack()
         
-        frameContenido=tk.Frame(ventanaTienda)
+        frameContenido=tk.Frame(framePrincipal)
         frameContenido.config(width=800,height=550,bg="#25857d")
-        frameContenido.pack(pady=10)
+        frameContenido.pack(pady=10,expand=True, fill="both")
         frameLateral=tk.Frame(frameContenido)
         frameLateral.pack(pady=10,padx=20)
         labelLateral=tk.Label(frameLateral, text="lateral")
@@ -110,7 +114,7 @@ class Interfaz:
         labelContenidoProductos.pack()
         #ahora averiguar si toca hacer un frame por cada producto.
         
-        framePiePagina=tk.Frame(ventanaTienda)
+        framePiePagina=tk.Frame(framePrincipal)
         framePiePagina.config(width=800,height=100)
         framePiePagina.pack(pady=10)
         #crear secciones del mockup
