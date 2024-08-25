@@ -7,6 +7,9 @@ class Interfaz:
         self.nombreUsuario=None
         self.documentoUsuario=None
         self.objControlador=None
+        self.logo=None
+        self.reproducir=None
+        self.pastilla=None
         
     def set_controlador(self,controlador):
         self.objControlador=controlador
@@ -97,9 +100,8 @@ class Interfaz:
         nombre=tk.Label(frameTituloEmpresa, text="DROGUERIA HAYBET")
         nombre.config(width=15,height=8)
         nombre.pack(expand=True)
-        logo=self.interfacePictures("logo.png")
-        LabelImagenEncabezado=tk.Label(frameEncabezado,image=logo)
-        LabelImagenEncabezado.config(bg="#cc9b25")
+        self.logo=self.interfacePictures("logo.png",160,150)
+        LabelImagenEncabezado=tk.Label(frameEncabezado,image=self.logo)
         LabelImagenEncabezado.place(relx=0.86,rely=0.05,relheight=0.9,relwidth=0.24,anchor="n")
         
         frameContenido=tk.Frame(framePrincipal)
@@ -108,8 +110,9 @@ class Interfaz:
         frameLateral=tk.Frame(frameContenido)
         frameLateral.config(bg="#f9d423")
         frameLateral.place(relx=0.11,rely=0.02,relheight=0.96,relwidth=0.2,anchor="n")
-        labelLateral=tk.Label(frameLateral, text="lateral")
-        labelLateral.pack()
+        self.reproducir=self.interfacePictures("reproducir.png",145,140)
+        labelLateral=tk.Label(frameLateral, image=self.reproducir)
+        labelLateral.pack(padx=5,pady=5)
         frameOptions=tk.Frame(frameLateral)
         frameOptions.config(bg="#ddffab")
         frameOptions.place(relx=0.5,rely=0.28,relheight=0.7,relwidth=0.95, anchor="n")
@@ -165,8 +168,9 @@ class Interfaz:
         framePiePagina=tk.Frame(framePrincipal)
         framePiePagina.config(width=800,height=100)
         framePiePagina.pack(pady=10)
-        frameLeft=tk.Frame(framePiePagina, bg="#e97f02")
-        frameLeft.place(relx=0.25,rely=0.05,relheight=0.9, relwidth=0.45,anchor="n")
+        self.pastilla=self.interfacePictures("doctor.png",305,80)
+        labelLeft=tk.Label(framePiePagina, image=self.pastilla)
+        labelLeft.place(relx=0.25,rely=0.05,relheight=0.9, relwidth=0.45,anchor="n")
         frameRight=tk.Frame(framePiePagina, bg="#e97f02")
         frameRight.place(relx=0.75,rely=0.05,relheight=0.9, relwidth=0.45,anchor="n")
         pieHome=tk.Button(frameRight, text="Home")
@@ -180,14 +184,15 @@ class Interfaz:
         pieBooks=tk.Button(frameRight, text="Books")
         pieBooks.place(relx=0.9,rely=0.25,relheight=0.5, relwidth=0.2,anchor="n")
         
+    def interfacePictures(self,pic,ancho,altura):
+        image= Image.open(pic).resize((ancho,altura))
+        img=ImageTk.PhotoImage(image)
+        return img
+        
     def activar_mainloop(self):
         tk.mainloop()
         
-    def interfacePictures(self,pic):
-        image= Image.open(pic)
-        image= image.resize((100,100),Image.ANTIALIAS)
-        img=ImageTk.PhotoImage(image)
-        return img
+
         
 
 Ventana=Interfaz()
