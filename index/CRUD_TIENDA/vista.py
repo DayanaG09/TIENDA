@@ -97,7 +97,7 @@ class Interfaz:
         nombre=tk.Label(frameTituloEmpresa, text="DROGUERIA HAYBET")
         nombre.config(width=15,height=8)
         nombre.pack(expand=True)
-        logo=self.interfacePictures("logo_drogueriaHaybet.png")
+        logo=self.interfacePictures("logo.png")
         LabelImagenEncabezado=tk.Label(frameEncabezado,image=logo)
         LabelImagenEncabezado.config(bg="#cc9b25")
         LabelImagenEncabezado.place(relx=0.86,rely=0.05,relheight=0.9,relwidth=0.24,anchor="n")
