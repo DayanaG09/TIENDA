@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from PIL import ImageTk, Image
 
 class Interfaz:
     def __init__(self):
@@ -96,11 +97,10 @@ class Interfaz:
         nombre=tk.Label(frameTituloEmpresa, text="DROGUERIA HAYBET")
         nombre.config(width=15,height=8)
         nombre.pack(expand=True)
-        frameImagenEncabezado=tk.Frame(frameEncabezado)
-        frameImagenEncabezado.config(bg="#cc9b25")
-        frameImagenEncabezado.place(relx=0.86,rely=0.05,relheight=0.9,relwidth=0.24,anchor="n")
-        imagen=tk.Label(frameImagenEncabezado,text="Imagen")
-        imagen.pack(expand=True)
+        logo=self.interfacePictures("logo_drogueriaHaybet.png")
+        LabelImagenEncabezado=tk.Label(frameEncabezado,image=logo)
+        LabelImagenEncabezado.config(bg="#cc9b25")
+        LabelImagenEncabezado.place(relx=0.86,rely=0.05,relheight=0.9,relwidth=0.24,anchor="n")
         
         frameContenido=tk.Frame(framePrincipal)
         frameContenido.config(width=800,height=550,bg="#25857d")
@@ -179,13 +179,15 @@ class Interfaz:
         pieMovies.place(relx=0.7,rely=0.25,relheight=0.5, relwidth=0.2,anchor="n")
         pieBooks=tk.Button(frameRight, text="Books")
         pieBooks.place(relx=0.9,rely=0.25,relheight=0.5, relwidth=0.2,anchor="n")
-        #crear secciones del mockup
-        
-        #falta crear la interfaz de informe de productos
-        #tambien hay que hacer dos interfaces(administrador,cliente)
         
     def activar_mainloop(self):
         tk.mainloop()
+        
+    def interfacePictures(self,pic):
+        image= Image.open(pic)
+        image= image.resize((100,100),Image.ANTIALIAS)
+        img=ImageTk.PhotoImage(image)
+        return img
         
 
 Ventana=Interfaz()
