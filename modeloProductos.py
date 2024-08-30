@@ -102,4 +102,4 @@ modelo.categoria = categoria_a
 modelo.precio= precio_a
 modelo.cantidadesVendidas= Out
 
-modelo.registrarProducto (modelo.nombre, modelo.detalles, modelo.categoria, modelo.precio, modelo.cantidadesVendidas)
+modelo.registrarProducto (modelo.name, modelo.detalles, modelo.categoria, modelo.precio, modelo.cantidadesVendidas)
