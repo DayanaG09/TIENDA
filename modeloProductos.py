@@ -11,8 +11,8 @@ class __init__(self):
 ##Datos
 def getDatos():
     return self.datos
-def setDatos(productos):
-    self.nombreProducto= name 
+def setDatos(datos):
+    self.datos= datos
 ##nombre productos  
 def getDatos():
     return self.datos
