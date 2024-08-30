@@ -79,7 +79,13 @@ class Interfaz:
             canvas.yview_scroll(-1 * int((event.delta / 120)), "units")
 
         canvas.bind_all("<MouseWheel>", _on_mouse_wheel)
+    
+        self.crearEncabezado(framePrincipal)
+        self.crearContenido(framePrincipal)
+        self.crearPiePagina(framePrincipal)
         
+        
+    def crearEncabezado(self,framePrincipal):
         frameEncabezado=tk.Frame(framePrincipal)
         frameEncabezado.config(bg="#98c3a1",height=200)
         frameEncabezado.pack(padx=10,pady=10, expand=True, fill="both")
@@ -104,6 +110,8 @@ class Interfaz:
         LabelImagenEncabezado=tk.Label(frameEncabezado,image=self.logo)
         LabelImagenEncabezado.place(relx=0.86,rely=0.05,relheight=0.9,relwidth=0.24,anchor="n")
         
+    
+    def crearContenido(self,framePrincipal):
         frameContenido=tk.Frame(framePrincipal)
         frameContenido.config(width=800,height=550,bg="#25857d")
         frameContenido.pack(pady=10,padx=10,expand=True, fill="both")
@@ -153,36 +161,68 @@ class Interfaz:
         botonC4.place(relx=0.7,rely=0.2,relheight=0.6, relwidth=0.18,anchor="n")
         botonC5=tk.Button(frameCategorias, text="Categoría")
         botonC5.place(relx=0.9,rely=0.2,relheight=0.6, relwidth=0.18,anchor="n")
+        self.mostrarHome(frameContenido)
+        
+    def mostrarHome(self,frameContenido):
         frameProductos=tk.Frame(frameContenido)
         frameProductos.place(relx=0.605,rely=0.13,relheight=0.85, relwidth=0.77,anchor="n")
-        frmTituloCatalogo=tk.Frame(frameProductos)
+        frmTituloCatalogo=tk.Frame(frameProductos,bg="#f9d423")
         frmTituloCatalogo.pack(padx=5,pady=5)
         labelTituloCatalogo=tk.Label(frmTituloCatalogo,text="TITULO DE CATALOGO")
-        labelTituloCatalogo.pack()
+        labelTituloCatalogo.pack(expand=True,fill="both")
         frmContenidoProductos=tk.Frame(frameProductos)
-        frmContenidoProductos.pack()
-        fProduct1=tk.Frame(frmContenidoProductos,bg="#59baa9",height=20,width=20, )
-        fProduct1.grid(column=0,row=0, pady=5,padx=5)
+        frmContenidoProductos.pack(expand=True,fill="both")
+        fProduct1=tk.Frame(frmContenidoProductos,bg="#59baa9",height=40,width=40, )
+        fProduct1.place(relx=0.2,rely=0.05,relheight=0.25, relwidth=0.25,anchor="n")
+        LImagen1=tk.Label(fProduct1,text="imagen")
+        LImagen1.pack(expand=True,fill="both")
+        lp1=tk.Label(fProduct1,text="nombre de la imagen\nnombre Producto\ncategoria Producto\n precio Producto",bg="#ddffab")
+        lp1.pack(expand=True,fill="both")
         fProduct2=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct2.grid(column=0,row=0, pady=5,padx=5)
+        fProduct2.place(relx=0.5,rely=0.05,relheight=0.25, relwidth=0.25,anchor="n")
+        LImagen2=tk.Label(fProduct2,text="imagen")
+        LImagen2.pack(expand=True,fill="both")
+        lp2=tk.Label(fProduct2,text="nombre de la imagen\nnombre Producto\ncategoria Producto\n precio Producto",bg="#ddffab")
+        lp2.pack(expand=True,fill="both")
         fProduct3=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct3.grid(column=0,row=0, pady=5,padx=5)
+        fProduct3.place(relx=0.8,rely=0.05,relheight=0.25, relwidth=0.25,anchor="n")
+        LImagen3=tk.Label(fProduct3,text="imagen")
+        LImagen3.pack(expand=True,fill="both")
+        lp3=tk.Label(fProduct3,text="nombre de la imagen\nnombre Producto\ncategoria Producto\n precio Producto",bg="#ddffab")
+        lp3.pack(expand=True,fill="both")
         fProduct4=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct4.grid(column=0,row=0, pady=5, padx=5)
-        fProduct4=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct4.grid(column=0,row=0, pady=5, padx=5)
+        fProduct4.place(relx=0.2,rely=0.35,relheight=0.25, relwidth=0.25,anchor="n")
+        LImagen4=tk.Label(fProduct4,text="imagen")
+        LImagen4.pack(expand=True,fill="both")
+        lp4=tk.Label(fProduct4,text="nombre de la imagen\nnombre Producto\ncategoria Producto\n precio Producto",bg="#ddffab")
+        lp4.pack(expand=True,fill="both")
         fProduct5=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct5.grid(column=0,row=0, pady=5,padx=5)
+        fProduct5.place(relx=0.5,rely=0.35,relheight=0.25, relwidth=0.25,anchor="n")
+        LImagen5=tk.Label(fProduct5,text="imagen")
+        LImagen5.pack(expand=True,fill="both")
+        lp5=tk.Label(fProduct5,text="nombre de la imagen\nnombre Producto\ncategoria Producto\n precio Producto",bg="#ddffab")
+        lp5.pack(expand=True,fill="both")
         fProduct6=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct6.grid(column=0,row=0, pady=5,padx=5)
+        fProduct6.place(relx=0.8,rely=0.35,relheight=0.25, relwidth=0.25,anchor="n")
+        lp6=tk.Label(fProduct6,text="nombre de la imagen\nnombre Producto\ncategoria Producto\n precio Producto",bg="#ddffab")
+        lp6.pack(expand=True,fill="both")
         fProduct7=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct7.grid(column=0,row=0, pady=5,padx=5)
+        fProduct7.place(relx=0.2,rely=0.65,relheight=0.25, relwidth=0.25,anchor="n")
+        lp7=tk.Label(fProduct7,text="nombre de la imagen\nnombre Producto\ncategoria Producto\n precio Producto",bg="#ddffab")
+        lp7.pack(expand=True,fill="both")
         fProduct8=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct8.grid(column=0,row=0, pady=5,padx=5)
+        fProduct8.place(relx=0.5,rely=0.65,relheight=0.25, relwidth=0.25,anchor="n")
+        lp8=tk.Label(fProduct8,text="nombre de la imagen\nnombre Producto\ncategoria Producto\n precio Producto",bg="#ddffab")
+        lp8.pack(expand=True,fill="both")
         fProduct9=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct9.grid(column=0,row=0, pady=5,padx=5)
-        #ahora averiguar si toca hacer un frame por cada producto.
+        fProduct9.place(relx=0.8,rely=0.65,relheight=0.25, relwidth=0.25,anchor="n")
+        lp9=tk.Label(fProduct9,text="nombre de la imagen\nnombre Producto\ncategoria Producto\n precio Producto",bg="#ddffab")
+        lp9.pack(expand=True,fill="both")
+            
+    def mostrarProducts(self,frameContenido):
+        None
         
+    def crearPiePagina(self,framePrincipal):
         framePiePagina=tk.Frame(framePrincipal)
         framePiePagina.config(width=800,height=100)
         framePiePagina.pack(pady=10)
@@ -209,8 +249,6 @@ class Interfaz:
         
     def activar_mainloop(self):
         tk.mainloop()
-        
-
         
 
 Ventana=Interfaz()
