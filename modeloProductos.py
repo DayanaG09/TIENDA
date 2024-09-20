@@ -1,4 +1,5 @@
 from basededatos import crearConexion
+import json
 
 class Producto:
     
@@ -81,15 +82,37 @@ class Producto:
             return consulta
     
 ##GENERAR INFORME
-##def generarInforme(productosVendidos):
-           ## with open(f'{productosVendidos}', 'w', encoding='utf8') as archivo:
-
-                ##json.dumps(modelo.datos, archivo)
-            ##print("informe generado")
+    def crearArchivo(self,datoTitulo,datosInforme):
+        nombreArchivo=datoTitulo+".txt"
+        with open(nombreArchivo, 'w', encoding='utf-8') as archivo:
+            json.dump(datosInforme, archivo)
+        return nombreArchivo
+    def leerArchivo(self,auxArchivo):
+        with open(auxArchivo,"r") as archivo:
+            datoContenido=archivo.read()
+            print(datoContenido)
+            archivo.close()
+    
+    def sobreescribirArchivo(self,auxArchivo):
+        with open(auxArchivo,"w") as archivo:
+            datoContenido=archivo.write()
+            print(datoContenido)
+            archivo.close()
+            
+    def agregar_al_Archivo(self,auxArchivo):
+        with open(auxArchivo,"a") as archivo:
+            datoContenido=archivo.write()
+            print(datoContenido)
+            archivo.close()
+            
+    def deserializar(self,nombreArchivo):
+        with open(nombreArchivo+".txt","r") as archivo:
+            datoCreado=json.load(archivo)
+        return datoCreado
             
             
 Producto.datos= Producto.consultarProductos()
-print(modelo.datos)
+print(Producto.datos)
 respuesta = Producto.consultaCategoria()
 print(respuesta)
 nombre_a=input("Nombre del producto:")
@@ -104,4 +127,4 @@ Producto.categoria = categoria_a
 Producto.precio= precio_a
 Producto.cantidadesVendidas= Out
 
-Producto.registrarProducto (modelo.name, modelo.detalles, modelo.categoria, modelo.precio, modelo.cantidadesVendidas)
+Producto.registrarProducto (Producto.name, Producto.detalles, Producto.categoria, Producto.precio, Producto.cantidadesVendidas)
