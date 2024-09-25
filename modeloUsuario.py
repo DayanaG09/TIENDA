@@ -57,4 +57,4 @@ Usuario.identificador= documento
 Usuario.contacto= numero
 Usuario.nivel= cargo
 
-Usuario.registrarUsuario(modelo.nombre, modelo.identificador, modelo.contacto, modelo.nivel)
+Usuario.registrarUsuario(Usuario.nombre, Usuario.identificador, Usuario.contacto, Usuario.nivel)
