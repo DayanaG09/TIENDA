@@ -73,14 +73,19 @@ class Interfaz:
         frameRol=tk.Frame(frameLogin)
         frameRol.pack(pady=15)
        
+        def habilitar_radio(opcion):
+            botonAdmin.config(state="normal" if opcion == 1 else "disabled", font=("Georgia", 10 , "bold"))
+            botonVendedor.config(state="normal" if opcion == 2 else "disabled", font=("Georgia", 10 , "bold"))
         
-        botonAdmin=tk.Radiobutton(frameRol, text="Administrador",value="admin")
+        botonAdmin=tk.Radiobutton(frameRol, text="Administrador",value=1)
         botonAdmin.grid(column=0,row=0, pady=5, padx=7)
-        botonAdmin.config(font=("Georgia", 10 , "bold"))
         
-        botonVendedor=tk.Radiobutton(frameRol, text="Vendedor",value="vendedor")
+        
+        botonVendedor=tk.Radiobutton(frameRol, text="Vendedor",value=2)
         botonVendedor.grid(column=1, row=0, pady=5, padx=7)
-        botonVendedor.config(font=("Georgia", 10 , "bold"))
+        
+        btn_Admi=tk.Button(frameRol, text="habilitar Admi", command=lambda:habilitar_radio(1))
+        btn_Ven=tk.Button(frameRol, text="habilitar Admi", command=lambda:habilitar_radio(2))
         
         botonIngresar=tk.Button(frameLogin,text="Iniciar sesion",command=self.funcionIngresar)
         botonIngresar.config(font=letra)
