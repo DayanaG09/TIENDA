@@ -53,7 +53,7 @@ class Producto:
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
         try:
-            cursor.execute(f"INSERT INTO productos (nombre__producto,cantidad_existencia,cantidad_vendidas, categoria, detalles,precio_products) VALUES ('{nombre}','{cantidadExistencia}','{cantidadVendida}','{categoria}','{detalles}','{precioProducto}')")
+            cursor.execute("INSERT INTO productos (nombre__producto,cantidad_existencia,cantidad_vendidas, categoria, detalles,precio_products) VALUES (%s,%s,%s,%s,%s,%s)", (nombre,cantidadExistencia,cantidadVendida,categoria,detalles,precioProducto))
             conexion1.commit()
             print("Datos Guardados con exito")
         except Exception as e:
@@ -94,10 +94,10 @@ class Producto:
             conexion1.close()
     
 ##GENERAR INFORME
-    def crearArchivo(self,datoTitulo,datosInforme):
+    def crearArchivo(self,datoTitulo,contenidoInforme):
         nombreArchivo=datoTitulo+".txt"
         with open(nombreArchivo, 'w', encoding='utf-8') as archivo:
-            json.dump(datosInforme, archivo)
+            json.dump(contenidoInforme, archivo)
         return nombreArchivo
     def leerArchivo(self,auxArchivo):
         with open(auxArchivo,"r") as archivo:
@@ -105,13 +105,13 @@ class Producto:
             print(datoContenido)
             archivo.close()
     
-    def sobreescribirArchivo(self,auxArchivo):
+    def sobreescribirArchivo(self,auxArchivo):#falta añadir el contenido
         with open(auxArchivo,"w") as archivo:
             datoContenido=archivo.write()
             print(datoContenido)
             archivo.close()
             
-    def agregar_al_Archivo(self,auxArchivo):
+    def agregar_al_Archivo(self,auxArchivo):#falta añadir el contenido
         with open(auxArchivo,"a") as archivo:
             datoContenido=archivo.write()
             print(datoContenido)

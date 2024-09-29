@@ -4,33 +4,44 @@ class Usuario:
     def __init__ (self):
         self.usuario=None
         self.idUsuario=None
-        self.celular=None
         self.cargo=None
-        self.data=[]
 
     def getUsuario(self):
         return self.usuario
     def setUsuario(self, nombre):
         self.usuario=nombre
-    def getIdusuario(self):
+    def getIdUsuario(self):
         return self.idUsuario
-    def setIdusuario(self, identificador):
+    def setIdUsuario(self, identificador):
         self.idUsuario= identificador
+    def getCargo(self):
+        return self.cargo
+    def setCargo(self, cargo):
+        self.cargo=cargo
 
     def registrarUsuario(self,identificador,nombre ):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
-        cursor.execute(f"INSERT INTO usuario (Id_empleado, Nombre_empleado) VALUES ('{identificador}','{nombre}')")
-        conexion1.commit()
-        print("Datos Guardados con exito")  
-        cursor.close()
-        conexion1.close()
-        
+        try:   
+            cursor.execute("INSERT INTO usuario (Id_empleado, Nombre_empleado) VALUES (%s,%s)", (identificador,nombre))
+            conexion1.commit()
+            print("Datos Guardados con exito")  
+        except Exception as e:
+            print(f"Error al guardar los datos: {e}")
+        finally:   
+            cursor.close()
+            conexion1.close()
+            
     def consultarUsuario(self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
-        cursor.execute(f"SELECT * FROM usuario")
-        consulta = cursor.fetchall()
-        cursor.close()
-        conexion1.close()
-        return consulta
+        try:             
+            cursor.execute(f"SELECT * FROM usuario")
+            consulta = cursor.fetchall()
+            return consulta      
+        except Exception as e:
+            print(f"Error al consultar los usuarios: {e}")    
+            return None
+        finally:    
+            cursor.close()
+            conexion1.close()
