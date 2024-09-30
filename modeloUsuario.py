@@ -45,3 +45,17 @@ class Usuario:
         finally:    
             cursor.close()
             conexion1.close()
+            
+    def validarUsuario(self,listaUsuario):
+        conexion1 = crearConexion()
+        cursor = conexion1.cursor()
+        try:             
+            cursor.execute(f"SELECT * FROM usuario")
+            consulta = cursor.fetchall()
+            return consulta      
+        except Exception as e:
+            print(f"Error al consultar los usuarios: {e}")    
+            return None
+        finally:    
+            cursor.close()
+            conexion1.close()

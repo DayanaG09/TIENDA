@@ -4,4 +4,4 @@ class Controlador:
         
     def tomarDatosInicioSesion(self,listaDatos):
         listaUsuario=listaDatos
-       # self.objModelo.
+        #self.objModelo.
