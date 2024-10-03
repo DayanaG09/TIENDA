@@ -54,7 +54,7 @@ class Usuario:
         try:             
             cursor.execute(f"SELECT * FROM usuario WHERE Id_empleado = %s AND Nombre_empleado = %s", (id_usuario,nombre))
             consulta = cursor.fetchall()
-            return consulta is not None #retorna True
+            return True
         except Exception as e:
             print(f"Error al consultar los usuarios: {e}")
             return False
