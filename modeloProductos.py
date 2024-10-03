@@ -49,9 +49,21 @@ class Producto:
   ###REGISTRAR PRODUCTOS
   #1. SE HACE CONEXION CON LA BASE DE DATOS.  
             
-    def registrarProducto (self,nombre, cantidadExistencia, cantidadVendida, categoria, detalles, precioProducto):
+    def registrarProducto (self, listaProductos):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
+        nombre=listaProductos[0]
+        cantidadExistencia=listaProductos[1]
+        cantidadVendida=listaProductos[2]
+        categoria=listaProductos[3]
+        detalles=listaProductos[4]
+        precioProducto=listaProductos[5]
+        
+        #PARA OBTENER LA FECHA ACTUAL - SE USARÁ EN LA VISTA
+        #fecha_actual = datetime.now()
+        #fecha_formateada = fecha_actual.strftime('%Y-%m-%d %H:%M:%S')
+        #from datetime import datetime
+        
         try:
             cursor.execute("INSERT INTO products (nombre__producto,cantidad_existencia,cantidad_vendidas, categoria, detalles,precio_products) VALUES (%s,%s,%s,%s,%s,%s)", (nombre,cantidadExistencia,cantidadVendida,categoria,detalles,precioProducto))
             conexion1.commit()
