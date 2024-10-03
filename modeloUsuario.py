@@ -49,13 +49,15 @@ class Usuario:
     def validarUsuario(self,listaUsuario):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
+        id_usuario=listaUsuario[1]
+        nombre=listaUsuario[0]
         try:             
-            cursor.execute(f"SELECT * FROM usuario")
+            cursor.execute(f"SELECT * FROM usuario WHERE Id_empleado = %s AND Nombre_empleado = %s", (id_usuario,nombre))
             consulta = cursor.fetchall()
-            return consulta      
+            return consulta is not None #retorna True
         except Exception as e:
-            print(f"Error al consultar los usuarios: {e}")    
-            return None
+            print(f"Error al consultar los usuarios: {e}")
+            return False
         finally:    
             cursor.close()
             conexion1.close()

@@ -53,7 +53,7 @@ class Producto:
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
         try:
-            cursor.execute("INSERT INTO productos (nombre__producto,cantidad_existencia,cantidad_vendidas, categoria, detalles,precio_products) VALUES (%s,%s,%s,%s,%s,%s)", (nombre,cantidadExistencia,cantidadVendida,categoria,detalles,precioProducto))
+            cursor.execute("INSERT INTO products (nombre__producto,cantidad_existencia,cantidad_vendidas, categoria, detalles,precio_products) VALUES (%s,%s,%s,%s,%s,%s)", (nombre,cantidadExistencia,cantidadVendida,categoria,detalles,precioProducto))
             conexion1.commit()
             print("Datos Guardados con exito")
         except Exception as e:
@@ -64,11 +64,11 @@ class Producto:
         
 ##CONSULTAR O BUSCAR PRODUCTOS
 ##2. DESPUES DE TENER YA LOS PRODUCTOS REGISTRADOS PROCEDEMOS A BUSCARLOS.
-    def consultarProductos(self):
+    def consultarProducto(self, producto):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
         try:
-            cursor.execute(f"SELECT * FROM products")
+            cursor.execute(f"SELECT * FROM products WHERE products = %s", (producto))
             consulta = cursor.fetchall()
             return consulta
         except Exception as e:
@@ -83,7 +83,7 @@ class Producto:
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
         try:
-            cursor.execute(f"SELECT * FROM productos WHERE categoria = '{categoria}'")
+            cursor.execute(f"SELECT * FROM productos WHERE categoria = %s",(categoria))
             consulta = cursor.fetchall()
             return consulta
         except Exception as e:
