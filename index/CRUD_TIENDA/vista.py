@@ -23,6 +23,9 @@ class Interfaz:
         self.image7=None
         self.image8=None
         self.images=None
+        self.usuarioAdmi=None
+        self.usuarioVendedor=None
+        
     def set_controlador(self,controlador):
         self.objControlador=controlador
         
@@ -40,30 +43,30 @@ class Interfaz:
 
         
         frameInicioSesion=tk.Frame(self.ventanaLogin)
-        frameInicioSesion.config(bg="#96c7e6",width=400,height=500)
+        frameInicioSesion.config(bg="#8bb3e9",width=400,height=500)
         frameInicioSesion.pack(expand=True,fill="both")
         
         frameTitulo=tk.Frame(frameInicioSesion)
         frameTitulo.place(relx=0.7,rely=0,relheight=0.242, relwidth=0.69, anchor="n")
         labelTitulo=tk.Label(frameTitulo,bg= "white", text="INICIO DE SESION")
-        labelTitulo.config(font=letra, fg="#719ae2")
+        labelTitulo.config(font=letra, fg="#d6022a")
         labelTitulo.pack(expand=True,fill="both")
         
-        frameLogin=tk.Frame(frameInicioSesion, bg="#96c7e6")
+        frameLogin=tk.Frame(frameInicioSesion, bg="#8bb3e9")
         frameLogin.place(relx=0.5,rely=0.25,relheight=0.7, relwidth=0.65, anchor="n")
         
         LabelImagenLogin=tk.Label(frameInicioSesion,image=self.images)
         LabelImagenLogin.place(relheight=0.1,relwidth=0.1,anchor="n")
         LabelImagenLogin.grid(padx=0.5, pady=0.5)
         
-        labelNombre=tk.Label(frameLogin, bg= "#96c7e6",text="Nombre")
+        labelNombre=tk.Label(frameLogin, bg= "#8bb3e9",text="Nombre")
         labelNombre.config(font=letra)
         labelNombre.pack(pady=0.3)
         self.nombreUsuario=tk.StringVar()
         entryNombre=tk.Entry(frameLogin,textvariable=self.nombreUsuario)
         entryNombre.pack(pady=15)
         
-        labelDocumento=tk.Label(frameLogin , bg= "#96c7e6",text="Documento")
+        labelDocumento=tk.Label(frameLogin , bg= "#8bb3e9",text="Documento")
         labelDocumento.config(font=letra)
         labelDocumento.pack(pady=15)
         self.documentoUsuario=tk.StringVar()
@@ -76,25 +79,27 @@ class Interfaz:
         def habilitar_radio(opcion):
             botonAdmin.config(state="normal" if opcion == 1 else "disabled", font=("Georgia", 10 , "bold"))
             botonVendedor.config(state="normal" if opcion == 2 else "disabled", font=("Georgia", 10 , "bold"))
-        
+        self.usuarioAdmi=tk.StringVar(value=1)
         botonAdmin=tk.Radiobutton(frameRol, text="Administrador",value=1)
         botonAdmin.grid(column=0,row=0, pady=5, padx=7)
         
-        
+        self.usuarioVendedor=tk.StringVar(value=2)
         botonVendedor=tk.Radiobutton(frameRol, text="Vendedor",value=2)
         botonVendedor.grid(column=1, row=0, pady=5, padx=7)
         
         btn_Admi=tk.Button(frameRol, text="habilitar Admi", command=lambda:habilitar_radio(1))
-        btn_Ven=tk.Button(frameRol, text="habilitar Admi", command=lambda:habilitar_radio(2))
+        btn_Ven=tk.Button(frameRol, text="habilitar Vendedor", command=lambda:habilitar_radio(2))
         
         botonIngresar=tk.Button(frameLogin,text="Iniciar sesion",command=self.funcionIngresar)
-        botonIngresar.config(font=letra)
+        botonIngresar.config(font=letra, fg="white", bg="#d6022a")
         botonIngresar.pack(pady=15)
         
     def funcionIngresar(self):
         try:
             nombre=self.nombreUsuario.get()
             documento=self.documentoUsuario.get()
+            lista_datosUsuario=[nombre, documento]
+            ##pasar al controlador y validar
 
             if not nombre.isalpha():
                 raise ValueError("El nombre solo debe contener letras")
