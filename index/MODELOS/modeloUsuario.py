@@ -3,7 +3,7 @@ from index.MODELOS.basededatos import crearConexion
 class Usuario:
     def __init__ (self):
         self.idUsuario=None
-        self.usuario=None
+        self.nombre=None
         self.celular=None
         self.cargo=None
         
@@ -12,9 +12,9 @@ class Usuario:
     def setIdUsuario(self, identificador):
         self.idUsuario= identificador
     def getNombre(self):
-        return self.usuario
+        return self.nombre
     def setNombre(self, nombre):
-        self.usuario=nombre
+        self.nombre=nombre
     def getCelular(self):
         return self.celular
     def setCelular(self,celular):
@@ -42,6 +42,40 @@ class Usuario:
             print(f"Error al guardar los datos: {e}")
             return False
         finally:   
+            cursor.close()
+            conexion1.close()
+            
+    def modificarUsuario(self):
+        conexion1 = crearConexion()
+        cursor = conexion1.cursor()
+        try:
+            cursor.execute("""
+                UPDATE usuario
+                SET Id_usuario=%s, Nombre=%s, Celular=%s, Cargo=%s
+                WHERE Id_producto=%s
+                """, (self.idUsuario,self.nombre, self.celular, self.cargo))
+            conexion1.commit()   
+            print("Usuario modificado con éxito")
+            return True   
+        except Exception as e:
+            print(f"Error al modificar el usuario: {e}")
+            return False
+        finally:
+            cursor.close()
+            conexion1.close()
+
+    def eliminarUsuario(self):
+        conexion1 = crearConexion()
+        cursor = conexion1.cursor()
+        try:
+            cursor.execute("DELETE FROM usuario WHERE Id_usuario=%s", (self.idUsuario,))
+            conexion1.commit()
+            print("Usuario eliminado con éxito")
+            return True
+        except Exception as e:
+            print(f"Error al eliminar el usuario: {e}")
+            return False
+        finally:
             cursor.close()
             conexion1.close()
             

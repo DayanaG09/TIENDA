@@ -54,10 +54,8 @@ class Producto:
         self.setDetalles(listaProductos[4])
         self.setPrecio(listaProductos[5])
             
-  ###REGISTRAR PRODUCTOS
-  #1. SE HACE CONEXION CON LA BASE DE DATOS.  
-            
-    def crearProducto (self, listaProductos):
+  ###REGISTRAR PRODUCTOS   
+    def crearProducto (self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
                 
@@ -67,7 +65,7 @@ class Producto:
         #from datetime import datetime
         
         try:
-            cursor.execute("INSERT INTO produco (nombre__producto,cantidad_existencia,cantidad_vendidas, categoria, detalles,precio_products) VALUES (%s,%s,%s,%s,%s,%s)", (self.nombre,self.existencia,self.cantidadesVendidas,self.categoria,self.detalles,self.precio))
+            cursor.execute("INSERT INTO produco (nombre__producto,cantidad_existencia,cantidad_vendidas, Id_categoria, detalles,precio_products) VALUES (%s,%s,%s,%s,%s,%s)", (self.nombre,self.existencia,self.cantidadesVendidas,self.categoria,self.detalles,self.precio))
             conexion1.commit()
             print("Datos Guardados con exito")
         except Exception as e:
@@ -75,9 +73,44 @@ class Producto:
         finally:
             cursor.close()
             conexion1.close()
+    
+    def modificarProducto(self):
+        conexion1 = crearConexion()
+        cursor = conexion1.cursor()
+        try:
+            cursor.execute("""
+                UPDATE producto
+                SET nombre__producto=%s, cantidad_existencia=%s, cantidad_vendidas=%s, 
+                    Id_categoria=%s, detalles=%s, precio_producto=%s 
+                WHERE Id_producto=%s
+                """, (self.nombre,self.existencia,self.cantidadesVendidas,self.categoria,self.detalles,self.precio,self.idProducto))
+            conexion1.commit()
+            print("Producto modificado con éxito")
+            return True
+        except Exception as e:
+            print(f"Error al modificar el producto: {e}")
+            return False
+        finally:
+            cursor.close()
+            conexion1.close()
+
+    def eliminarProducto(self):
+        conexion1 = crearConexion()
+        cursor = conexion1.cursor()
+        try:
+            cursor.execute("DELETE FROM producto WHERE Id_producto=%s", (self.idProducto,))
+            conexion1.commit()
+            print("Producto eliminado con éxito")
+            return True
+        except Exception as e:
+            print(f"Error al eliminar el producto: {e}")
+            return False
+        finally:
+            cursor.close()
+            conexion1.close()
+
         
 ##CONSULTAR O BUSCAR PRODUCTOS
-##2. DESPUES DE TENER YA LOS PRODUCTOS REGISTRADOS PROCEDEMOS A BUSCARLOS.
     def consultarProductos(self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
@@ -91,7 +124,7 @@ class Producto:
         finally:
             cursor.close()
             conexion1.close()
-    
+            
 ###CONSULTA DE CATEGORIA
     def consultaCategoria(self,categoria):
         conexion1 = crearConexion()
