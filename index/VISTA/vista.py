@@ -23,6 +23,7 @@ class Interfaz:
         self.image7=None
         self.image8=None
         self.images=None
+        self.contactoDrogueria=None
     def set_controlador(self,controlador):
         self.objControlador=controlador
         
@@ -36,7 +37,7 @@ class Interfaz:
         self.ventanaLogin.maxsize(600,800)
         self.ventanaLogin.title("INICIO SESION HAYBET SALUD")
         letra=("Georgia", 20, "bold")
-        self.images = self.interfacePictures(r"index\CRUD_TIENDA\imagenes\pastillas.jpg", 250, 190)
+        self.images = self.interfacePictures(r"index\VISTA\imagenes\pastillas.jpg", 250, 190)
 
         
         frameInicioSesion=tk.Frame(self.ventanaLogin)
@@ -155,18 +156,18 @@ class Interfaz:
         frameSecciones.place(relx=0.16,rely=0.05,relheight=0.9,relwidth=0.28,anchor="n")
         home=tk.Button(frameSecciones,bg="#d6022a",  text="Home",font=letra , fg="white")
         home.place(relx=0.125,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
-        products=tk.Button(frameSecciones,  bg="#d6022a",text="Productos", font=letra , fg="white", command= lambda: self.mostrarProducts(self.frameContenido))
+        products=tk.Button(frameSecciones,  bg="#d6022a",text="Productos", font=letra , fg="white", command= lambda: self.mostrarProductos(self.frameContenido))
         products.place(relx=0.37,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
-        about=tk.Button(frameSecciones, bg="#d6022a", text="Informes", font=letra , fg="white", command=lambda: self.mostrarAbout(self.frameContenido))
+        about=tk.Button(frameSecciones, bg="#d6022a", text="Informes", font=letra , fg="white", command=lambda: self.mostrarInformes(self.frameContenido))
         about.place(relx=0.62,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
-        contact=tk.Button(frameSecciones, bg="#d6022a", text="Contacto", font=letra , fg="white")
+        contact=tk.Button(frameSecciones, bg="#d6022a", text="Contacto", font=letra , fg="white", command=lambda: self.mostrarContacto(self.frameContenido))
         contact.place(relx=0.87,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
         frameTituloEmpresa=tk.Frame(frameEncabezado)
         frameTituloEmpresa.place(relx=0.52,rely=0.05,relheight=0.9,relwidth=0.4,anchor="n")
         nombre=tk.Label(frameTituloEmpresa,bg="white", text="DROGUERÍA HAYBET" , font=("Georgia",20 , "bold") , fg="#d6022a")
         nombre.config(width=30,height=10)
         nombre.pack(expand=True)
-        self.logo=self.interfacePictures("index/CRUD_TIENDA/imagenes/logo_drogueriaHaybet.png",160,150)
+        self.logo=self.interfacePictures("index/VISTA/imagenes/logo_drogueriaHaybet.png",160,150)
         LabelImagenEncabezado=tk.Label(frameEncabezado,image=self.logo)
         LabelImagenEncabezado.config(bg="white")
         LabelImagenEncabezado.place(relx=0.86,rely=0.05,relheight=0.9,relwidth=0.24,anchor="n")
@@ -177,7 +178,7 @@ class Interfaz:
         frameContenido.pack(pady=10,padx=10,expand=True, fill="both")
         frameLateral=tk.Frame(frameContenido, bg="#8bb3e9")
         frameLateral.place(relx=0.11,rely=0.02,relheight=0.96,relwidth=0.2,anchor="n")
-        self.reproducir=self.interfacePictures("index/CRUD_TIENDA/imagenes/imagen_reproducir.png",145,140)
+        self.reproducir=self.interfacePictures("index/VISTA/imagenes/imagen_reproducir.png",145,140)
         labelLateral=tk.Label(frameLateral, image=self.reproducir, bg="#a5ccf1" )
         labelLateral.pack(padx=5,pady=5)
         frameOptions=tk.Frame(frameLateral, bg="blue")
@@ -221,7 +222,7 @@ class Interfaz:
         botonC5=tk.Button(frameCategorias, text="Hogar",bg="white",  font=("Georgia",8, "bold"), fg="#719ae2")
         botonC5.place(relx=0.9,rely=0.2,relheight=0.6, relwidth=0.18,anchor="n")
         
-    def mostrarProducts(self,frameContenido):
+    def mostrarProductos(self,frameContenido):
         letra=("Georgia",10, "bold")
         frameProductos=tk.Frame(frameContenido)
         frameProductos.place(relx=0.605,rely=0.13,relheight=0.85, relwidth=0.77,anchor="n")
@@ -235,7 +236,7 @@ class Interfaz:
         frmContenidoProductos.pack(expand=True,fill="both")
         frmContenidoProductos.config(bg="#719ae2")
         
-        self.image=self.interfacePictures("index/CRUD_TIENDA/imagenes/dolex.jpg",100,50)
+        self.image=self.interfacePictures("index/VISTA/imagenes/dolex.jpg",100,50)
         fProduct1=tk.Frame(frmContenidoProductos,height=40,width=40)
         fProduct1.place(relx=0.2,rely=0.05,relheight=0.25, relwidth=0.25,anchor="n")
         fProduct1.config(bg="#719ae2")
@@ -245,7 +246,7 @@ class Interfaz:
         lp1=tk.Label(fProduct1,text="Medicamentos\nDolex\n $15.000",bg="white")
         lp1.config(bg="#aecef8", font=letra, fg="black")
         lp1.pack(expand=True,fill="both")
-        self.image0=self.interfacePictures("index/CRUD_TIENDA/imagenes/bebe.jpg",100,50)
+        self.image0=self.interfacePictures("index/VISTA/imagenes/bebe.jpg",100,50)
         fProduct2=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
         fProduct2.place(relx=0.5,rely=0.05,relheight=0.25, relwidth=0.25,anchor="n")
         fProduct2.config(bg="#719ae2")
@@ -255,7 +256,7 @@ class Interfaz:
         lp2=tk.Label(fProduct2,text="   Cuidado del bebé\nPañales Huggies\n $50.000",bg="#ddffab")
         lp2.pack(expand=True,fill="both")
         lp2.config(bg="#aecef8", font=letra, fg="black")
-        self.image2=self.interfacePictures("index/CRUD_TIENDA/imagenes/belleza.jpg",100,50)
+        self.image2=self.interfacePictures("index/VISTA/imagenes/belleza.jpg",100,50)
         fProduct3=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
         fProduct3.place(relx=0.8,rely=0.05,relheight=0.25, relwidth=0.25,anchor="n")
         fProduct3.config(bg="#719ae2")
@@ -265,7 +266,7 @@ class Interfaz:
         lp3=tk.Label(fProduct3,text="Belleza\nEsmalte+polvo\n precio $30.000",bg="#ddffab")
         lp3.pack(expand=True,fill="both")
         lp3.config(bg="#aecef8", font=letra, fg="black")
-        self.image1=self.interfacePictures("index/CRUD_TIENDA/imagenes/mieltertos.jpg",100,50)
+        self.image1=self.interfacePictures("index/VISTA/imagenes/mieltertos.jpg",100,50)
         fProduct4=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
         fProduct4.place(relx=0.2,rely=0.35,relheight=0.25, relwidth=0.25,anchor="n")
         fProduct4.config(bg="#719ae2")
@@ -275,7 +276,7 @@ class Interfaz:
         lp4=tk.Label(fProduct4,text="Medicamentos\nMieltertos 1\\n $1.500",bg="#ddffab")
         lp4.pack(expand=True,fill="both")
         lp4.config(bg="#aecef8", font=letra, fg="black")
-        self.image3=self.interfacePictures("index/CRUD_TIENDA/imagenes/benet.png",100,50)
+        self.image3=self.interfacePictures("index/VISTA/imagenes/benet.png",100,50)
         fProduct5=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
         fProduct5.place(relx=0.5,rely=0.35,relheight=0.25, relwidth=0.25,anchor="n")
         fProduct5.config(bg="#719ae2")
@@ -285,7 +286,7 @@ class Interfaz:
         lp5=tk.Label(fProduct5,text="Bienestar\nBenet\n $80.000",bg="#ddffab")
         lp5.pack(expand=True,fill="both")
         lp5.config(bg="#aecef8", font=letra, fg="black")
-        self.image4=self.interfacePictures("index/CRUD_TIENDA/imagenes/bebe2.png",100,50)
+        self.image4=self.interfacePictures("index/VISTA/imagenes/bebe2.png",100,50)
         fProduct6=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
         fProduct6.place(relx=0.8,rely=0.35,relheight=0.25, relwidth=0.25,anchor="n")
         fProduct6.config(bg="#719ae2")
@@ -295,7 +296,7 @@ class Interfaz:
         lp6=tk.Label(fProduct6,text="Cuidado del bebé\nCrema N°4\n $10.000",bg="#ddffab")
         lp6.pack(expand=True,fill="both")
         lp6.config(bg="#aecef8", font=letra, fg="black")
-        self.image5=self.interfacePictures("index/CRUD_TIENDA/imagenes/hogar.png",100,50)
+        self.image5=self.interfacePictures("index/VISTA/imagenes/hogar.png",100,50)
         fProduct7=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
         fProduct7.place(relx=0.2,rely=0.65,relheight=0.25, relwidth=0.25,anchor="n")
         fProduct7.config(bg="#719ae2")
@@ -305,7 +306,7 @@ class Interfaz:
         lp7=tk.Label(fProduct7,text="Hogar\nPapel Familia x12\n $15.000",bg="#ddffab")
         lp7.pack(expand=True,fill="both")
         lp7.config(bg="#aecef8", font=letra, fg="black")
-        self.image6=self.interfacePictures("index/CRUD_TIENDA/imagenes/mieltertos2.jpg",100,50)
+        self.image6=self.interfacePictures("index/VISTA/imagenes/mieltertos2.jpg",100,50)
         fProduct8=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
         fProduct8.place(relx=0.5,rely=0.65,relheight=0.25, relwidth=0.25,anchor="n")
         fProduct8.config(bg="#719ae2")
@@ -315,7 +316,7 @@ class Interfaz:
         lp8=tk.Label(fProduct8,text="Medicametos \nMieltertos ped\n $15.000",bg="#ddffab")
         lp8.pack(expand=True,fill="both")
         lp8.config(bg="#aecef8", font=letra, fg="black")
-        self.image7=self.interfacePictures("index/CRUD_TIENDA/imagenes/bebe1.jpg",100,50)
+        self.image7=self.interfacePictures("index/VISTA/imagenes/bebe1.jpg",100,50)
         fProduct9=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
         fProduct9.place(relx=0.8,rely=0.65,relheight=0.25, relwidth=0.25,anchor="n")
         fProduct9.config(bg="#719ae2")
@@ -326,7 +327,7 @@ class Interfaz:
         lp9.pack(expand=True,fill="both")
         lp9.config(bg="#aecef8", font=letra, fg="black")
             
-    def mostrarAbout(self,frameContenido):
+    def mostrarInformes(self,frameContenido):
         letra=("Georgia",10, "bold")
         frameEstadisticas=tk.Frame(frameContenido)
         frameEstadisticas.place(relx=0.605,rely=0.13,relheight=0.85, relwidth=0.77,anchor="n")
@@ -427,11 +428,19 @@ class Interfaz:
         botonGenerar.place(relx=0.83,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
         botonGenerar.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
         
+    def mostrarContacto(self,frameContenido):
+        frameContacto=tk.Frame(frameContenido)
+        frameContacto.place(relx=0.605,rely=0.13,relheight=0.85, relwidth=0.77,anchor="n")
+        frameContacto.config(bg="gray")
+        self.contactoDrogueria=self.interfacePictures("index/VISTA/imagenes/contacto_drogueria.png",550,450)
+        labelContacto=tk.Label(frameContacto,image=self.contactoDrogueria)
+        labelContacto.pack(expand=True,fill="both")
+        
     def crearPiePagina(self,framePrincipal):
         framePiePagina=tk.Frame(framePrincipal, bg="#8bb3e9")
         framePiePagina.config(width=800,height=100)
         framePiePagina.pack(pady=10)
-        self.pastilla=self.interfacePictures("index/CRUD_TIENDA/imagenes/imagen_doctor.png",305,80)
+        self.pastilla=self.interfacePictures("index/VISTA/imagenes/imagen_doctor.png",305,80)
         labelLeft=tk.Label(framePiePagina, image=self.pastilla)
         labelLeft.place(relx=0.25,rely=0.05,relheight=0.9, relwidth=0.45,anchor="n")
         labelLeft.config(bg="#8bb3e9")
