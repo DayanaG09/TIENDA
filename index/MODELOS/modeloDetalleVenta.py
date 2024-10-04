@@ -1,4 +1,4 @@
-from basededatos import crearConexion
+from index.MODELOS.basededatos import crearConexion
 
 class DetalleVenta:
     def __init__(self):
