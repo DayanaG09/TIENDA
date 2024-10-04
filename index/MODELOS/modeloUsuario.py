@@ -7,28 +7,28 @@ class Usuario:
         self.celular=None
         self.cargo=None
         
-    def getIdUsuario(self):
+    def get_id_usuario(self):
         return self.idUsuario
-    def setIdUsuario(self, identificador):
+    def set_id_usuario(self, identificador):
         self.idUsuario= identificador
-    def getNombre(self):
+    def get_nombre(self):
         return self.nombre
-    def setNombre(self, nombre):
+    def set_nombre(self, nombre):
         self.nombre=nombre
-    def getCelular(self):
+    def get_celular(self):
         return self.celular
-    def setCelular(self,celular):
+    def set_celular(self,celular):
         self.celular=celular
-    def getCargo(self):
+    def get_cargo(self):
         return self.cargo
-    def setCargo(self, cargo):
+    def set_cargo(self, cargo):
         self.cargo=cargo
         
     def set_usuario(self,listaUsuario):
-        self.setIdUsuario(listaUsuario[0])
-        self.setNombre(listaUsuario[1])
-        self.setCelular(listaUsuario[2])
-        self.setCargo(listaUsuario[3])
+        self.set_id_usuario(listaUsuario[0])
+        self.set_nombre(listaUsuario[1])
+        self.set_celular(listaUsuario[2])
+        self.set_cargo(listaUsuario[3])
             
     def consultar_usuario(self):
         conexion1 = crearConexion()
@@ -36,7 +36,7 @@ class Usuario:
         try:             
             cursor.execute(f"SELECT * FROM usuario")
             consulta = cursor.fetchall()
-            return consulta
+            self.set_usuario(consulta)
         except Exception as e:
             print(f"Error al consultar los usuarios: {e}")    
             return None
