@@ -1,6 +1,7 @@
 
 import tkinter as tk
 from tkinter import messagebox
+from tkinter import ttk
 from PIL import ImageTk, Image
 
 class Interfaz:
@@ -25,13 +26,10 @@ class Interfaz:
         self.image8=None
         self.images=None
         self.contactoDrogueria=None
+       
     def set_controlador(self,controlador):
         self.objControlador=controlador
-        
-        #SE DEBE BUSCAR LA MANERA DE VALIDACIÓN DE DATOS CON LA BASE DE DATOS
-        #FALTA DESTINAR COLORES ESPECIFCOS E INNOVACION PARA LA INTERFAZ
-        #FALTA HACER ALGUNOS CAMBIOS PARA TENER UNA INTERFAZ DIFERENTE PARA ADMIN Y OTRA PARA VENDEDOR
-        #SE DEBEN CARGAR IMAGENES Y NOMBRE CON DESCRIPCION Y PRECIO PARA LOS PRODUCTOS
+
     def ventanaIngreso(self):
         self.ventanaLogin=tk.Tk()
         self.ventanaLogin.geometry("600x800")
@@ -48,7 +46,7 @@ class Interfaz:
         frameTitulo=tk.Frame(frameInicioSesion)
         frameTitulo.place(relx=0.7,rely=0,relheight=0.242, relwidth=0.69, anchor="n")
         labelTitulo=tk.Label(frameTitulo,bg= "white", text="INICIO DE SESION")
-        labelTitulo.config(font=letra, fg="#719ae2")
+        labelTitulo.config(font=letra, fg="#d6022a")
         labelTitulo.pack(expand=True,fill="both")
         
         frameLogin=tk.Frame(frameInicioSesion, bg="#96c7e6")
@@ -89,11 +87,11 @@ class Interfaz:
         btn_Admi=tk.Button(frameRol, text="habilitar Admi", command=lambda:habilitar_radio(1))
         btn_Ven=tk.Button(frameRol, text="habilitar Admi", command=lambda:habilitar_radio(2))
         
-        botonIngresar=tk.Button(frameLogin,text="Iniciar sesion",command=self.funcionIngresar)
-        botonIngresar.config(font=letra)
+        botonIngresar=tk.Button(frameLogin,text="Iniciar sesion",command=self.funcionIngresar, bg="#d6022a")
+        botonIngresar.config(font=letra, fg="white")
         botonIngresar.pack(pady=15)
         
-    def funcionIngresar(self):
+    def funcion_ingresar(self):
         try:
             nombre=self.nombreUsuario.get()
             documento=self.documentoUsuario.get()
@@ -107,13 +105,21 @@ class Interfaz:
             if not nombre or not documento:
                 raise ValueError("Los campos deben ser llenados correctamente")
             
-            self.ventanaLogin.withdraw()
-            self.ventanaHome()
+            if username in usuarios and usuarios[username]["password"] == password:
+                role = usuarios[username]["role"]
+                if role == "admin":
+                    self.ventana_home_admin()
+                elif role == "vendedor":
+                    self.ventana_home_vendedor()
+            else:
+                messagebox.showerror("Error", "Usuario o contraseña incorrectos")
+        
             #self.objControlador.inicioSesion(nombre,documento)
         except ValueError as e:
             messagebox.showerror("Error",str(e))
             
-    def ventanaHome(self):
+            
+    def ventana_home_admin(self):
         
         ventanaTienda=tk.Toplevel()
         ventanaTienda.geometry("850x750")
@@ -142,14 +148,44 @@ class Interfaz:
 
         canvas.bind_all("<MouseWheel>", _on_mouse_wheel)
         self.frameContenido=tk.Frame(framePrincipal)
-        self.crearEncabezado(framePrincipal)
-        self.crearContenido(self.frameContenido) 
-        self.crearPiePagina(framePrincipal)
+        self.crear_encabezado(framePrincipal)
+        self.crear_contenido(self.frameContenido) 
+        self.crear_pie_pagina(framePrincipal)
         
+    def ventana_home_vendedor(self):
+        ventanaTienda=tk.Toplevel()
+        ventanaTienda.geometry("850x750")
+        ventanaTienda.maxsize(850,750)
+        ventanaTienda.title("DROGUERIA HAYBET SALUD")
         
-    def crearEncabezado(self,framePrincipal):
+        frameForCanvas=tk.Frame(ventanaTienda)
+        frameForCanvas.pack(fill="both",expand=True)
+        
+        canvas=tk.Canvas(frameForCanvas)
+        canvas.pack(side="left",fill="both",expand=True)
+        
+        scrollbar=tk.Scrollbar(frameForCanvas, orient="vertical", command=canvas.yview)
+        scrollbar.pack(side="right", fill="y")
+        
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))     
+        
+        framePrincipal=tk.Frame(canvas, bg="#719ae2")
+        framePrincipal.config(pady=10,padx=10)
+        
+        canvas.create_window((0,0), window=framePrincipal, anchor="nw")
+
+        def _on_mouse_wheel(event):
+            canvas.yview_scroll(-1 * int((event.delta / 120)), "units")
+
+        canvas.bind_all("<MouseWheel>", _on_mouse_wheel)
+        self.frameContenido=tk.Frame(framePrincipal)
+        self.crear_encabezado_vendedor(framePrincipal)    
+        self.crear_contenido()
+        self.crear_pie_pagina()
+        
+    def crear_encabezado(self,framePrincipal):
         letra=("Georgia",7, "bold")
-        
         frameEncabezado=tk.Frame(framePrincipal)
         frameEncabezado.config(height=200, bg="white")
         frameEncabezado.pack(padx=10,pady=10, expand=True, fill="both")
@@ -172,9 +208,31 @@ class Interfaz:
         LabelImagenEncabezado=tk.Label(frameEncabezado,image=self.logo)
         LabelImagenEncabezado.config(bg="white")
         LabelImagenEncabezado.place(relx=0.86,rely=0.05,relheight=0.9,relwidth=0.24,anchor="n")
-        
     
-    def crearContenido(self,frameContenido):
+    def crear_encabezado_vendedor(self,framePrincipal):
+        letra=("Georgia",7, "bold")
+        frameEncabezado=tk.Frame(framePrincipal)
+        frameEncabezado.config(height=200, bg="white")
+        frameEncabezado.pack(padx=10,pady=10, expand=True, fill="both")
+        frameSecciones=tk.Frame(frameEncabezado, bg="white")
+        frameSecciones.place(relx=0.16,rely=0.05,relheight=0.9,relwidth=0.28,anchor="n")
+        home=tk.Button(frameSecciones,bg="#d6022a",  text="Home",font=letra , fg="white")
+        home.place(relx=0.125,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
+        products=tk.Button(frameSecciones,  bg="#d6022a",text="Productos", font=letra , fg="white", command= lambda: self.mostrarProductos(self.frameContenido))
+        products.place(relx=0.37,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
+        contact=tk.Button(frameSecciones, bg="#d6022a", text="Contacto", font=letra , fg="white", command=lambda: self.mostrarContacto(self.frameContenido))
+        contact.place(relx=0.87,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
+        frameTituloEmpresa=tk.Frame(frameEncabezado)
+        frameTituloEmpresa.place(relx=0.52,rely=0.05,relheight=0.9,relwidth=0.4,anchor="n")
+        nombre=tk.Label(frameTituloEmpresa,bg="white", text="DROGUERÍA HAYBET" , font=("Georgia",20 , "bold") , fg="#d6022a")
+        nombre.config(width=30,height=10)
+        nombre.pack(expand=True)
+        self.logo=self.interfacePictures("index/VISTA/imagenes/logo_drogueriaHaybet.png",160,150)
+        LabelImagenEncabezado=tk.Label(frameEncabezado,image=self.logo)
+        LabelImagenEncabezado.config(bg="white")
+        LabelImagenEncabezado.place(relx=0.86,rely=0.05,relheight=0.9,relwidth=0.24,anchor="n")
+    
+    def crear_contenido(self,frameContenido):
         frameContenido.config(width=800,height=550, bg="#719ae2")
         frameContenido.pack(pady=10,padx=10,expand=True, fill="both")
         frameLateral=tk.Frame(frameContenido, bg="#8bb3e9")
@@ -223,7 +281,7 @@ class Interfaz:
         botonC5=tk.Button(frameCategorias, text="Hogar",bg="white",  font=("Georgia",8, "bold"), fg="#719ae2")
         botonC5.place(relx=0.9,rely=0.2,relheight=0.6, relwidth=0.18,anchor="n")
         
-    def mostrarProductos(self,frameContenido):
+    def mostrar_productos(self,frameContenido):
         letra=("Georgia",10, "bold")
         frameProductos=tk.Frame(frameContenido)
         frameProductos.place(relx=0.605,rely=0.13,relheight=0.85, relwidth=0.77,anchor="n")
@@ -327,8 +385,195 @@ class Interfaz:
         lp9=tk.Label(fProduct9,text="Cuidado del bebé\nLeche klim\n $80.000",bg="#ddffab")
         lp9.pack(expand=True,fill="both")
         lp9.config(bg="#aecef8", font=letra, fg="black")
+        
+        botonAdd=tk.Button(frmContenidoProductos,text="Agregar Producto", command=None) #al pulsar debe generar un informe de tipo texto con ayuda del JSON
+        botonAdd.place(relx=0.5,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
+        botonAdd.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
+        
+        botonActualizar=tk.Button(frmContenidoProductos,text="Actualizar producto", command=None) #al pulsar debe generar un informe de tipo texto con ayuda del JSON
+        botonActualizar.place(relx=0.67,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
+        botonActualizar.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
+        
+        botonDelete=tk.Button(frmContenidoProductos,text="Eliminar Producto", command=None) #al pulsar debe generar un informe de tipo texto con ayuda del JSON
+        botonDelete.place(relx=0.84,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
+        botonDelete.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
+    
+    def crear_producto():
+        ventana_crear= tk()
+        ventana_crear.title("ELIMINAR PRODUCTOS")
+        ventana_crear.geometry('400*500')
+        
+        crear= ttk.Interfaz(ventana_eliminar, columns=("codigo","producto","precio"), show='headings')
+        
+        crear.heading("codigo", text="CODIGO")
+        crear.heading("producto", text="Nombre Producto")
+        crear.heading("precio", text="Precio Producto")
+        
+        crear.column("codigo", width=150)
+        crear.column("producto", width=150)
+        crear.column("precio", width=150)
+        
+        ##traer los productos a mostrar desde la base de datos .
+        ##hacer la funcionalidad que seleccione el producto.
+        
+        boton_crear=tk.Button(frameLogin,text="Registrar Producto",command=self.eliminar_producto, bg="#d6022a")
+        boton_crear.config(font=letra, fg="white")
+        boton_crear.pack(pady=15)  
+          
+    def eliminar_producto():
+        ventana_eliminar= tk()
+        ventana_eliminar.title("ELIMINAR PRODUCTOS")
+        ventana_eliminar.geometry('400*500')
+        
+        eliminar= ttk.Interfaz(ventana_eliminar, columns=("codigo","producto","precio"), show='headings')
+        
+        eliminar.heading("codigo", text="CODIGO")
+        eliminar.heading("producto", text="Nombre Producto")
+        eliminar.heading("precio", text="Precio Producto")
+        
+        eliminar.column("codigo", width=150)
+        eliminar.column("producto", width=150)
+        eliminar.column("precio", width=150)
+        
+        ##traer los productos a mostrar desde la base de datos .
+        ##hacer la funcionalidad que seleccione el producto.
+        
+        boton_eliminar=tk.Button(frameLogin,text="Eliminar Producto",command=self.eliminar_producto, bg="#d6022a")
+        boton_eliminar.config(font=letra, fg="white")
+        boton_eliminar.pack(pady=15)
+
+    def modificar_producto():
+        ventana_modificar= tk()
+        ventana_modificar.title("ELIMINAR PRODUCTOS")
+        ventana_modificar.geometry('400*500')
+        
+        modificar= ttk.Interfaz(ventana_modificar, columns=("codigo","producto","precio"), show='headings')
+        modificar.heading("codigo", text="CODIGO")
+        modificar.heading("producto", text="Nombre Producto")
+        modificar.heading("precio", text="Precio Producto")
+        
+        modificar.column("codigo", width=150)
+        modificar.column("producto", width=150)
+        modificar.column("precio", width=150)
+        
+        ##traer los productos a mostrar desde la base de datos .
+        boton_modificar=tk.Button(frameLogin,text="modificar Producto",command=self.modificar_producto, bg="#d6022a")
+        boton_modificar.config(font=letra, fg="white")
+        boton_modificar.pack(pady=15)
+        
+        #se abre la ventana de modificacion.
+        
+    
+    def mostrar_productos_vendedor(self,frameContenido):
+        letra=("Georgia",10, "bold")
+        frameProductos=tk.Frame(frameContenido)
+        frameProductos.place(relx=0.605,rely=0.13,relheight=0.85, relwidth=0.77,anchor="n")
+        frameProductos.config(bg="#719ae2")
+        frmTituloCatalogo=tk.Frame(frameProductos)
+        frmTituloCatalogo.pack(padx=5,pady=5)
+        labelTituloCatalogo=tk.Label(frmTituloCatalogo,text="PRODUCTOS", bg="#719ae2")
+        labelTituloCatalogo.pack(expand=True,fill="both")
+        labelTituloCatalogo.config(font=letra, fg="white")
+        frmContenidoProductos=tk.Frame(frameProductos)
+        frmContenidoProductos.pack(expand=True,fill="both")
+        frmContenidoProductos.config(bg="#719ae2")
+        
+        self.image=self.interfacePictures("index/VISTA/imagenes/dolex.jpg",100,50)
+        fProduct1=tk.Frame(frmContenidoProductos,height=40,width=40)
+        fProduct1.place(relx=0.2,rely=0.05,relheight=0.25, relwidth=0.25,anchor="n")
+        fProduct1.config(bg="#719ae2")
+        LImagen1=tk.Label(fProduct1,image=self.image) 
+        LImagen1.pack(expand=True,fill="both")
+        LImagen1.config(bg="#719ae2")
+        lp1=tk.Label(fProduct1,text="Medicamentos\nDolex\n $15.000",bg="white")
+        lp1.config(bg="#aecef8", font=letra, fg="black")
+        lp1.pack(expand=True,fill="both")
+        self.image0=self.interfacePictures("index/VISTA/imagenes/bebe.jpg",100,50)
+        fProduct2=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
+        fProduct2.place(relx=0.5,rely=0.05,relheight=0.25, relwidth=0.25,anchor="n")
+        fProduct2.config(bg="#719ae2")
+        LImagen2=tk.Label(fProduct2,image=self.image0)
+        LImagen2.pack(expand=True,fill="both")
+        LImagen2.config(bg="#719ae2")
+        lp2=tk.Label(fProduct2,text="   Cuidado del bebé\nPañales Huggies\n $50.000",bg="#ddffab")
+        lp2.pack(expand=True,fill="both")
+        lp2.config(bg="#aecef8", font=letra, fg="black")
+        self.image2=self.interfacePictures("index/VISTA/imagenes/belleza.jpg",100,50)
+        fProduct3=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
+        fProduct3.place(relx=0.8,rely=0.05,relheight=0.25, relwidth=0.25,anchor="n")
+        fProduct3.config(bg="#719ae2")
+        LImagen3=tk.Label(fProduct3,image=self.image2)
+        LImagen3.pack(expand=True,fill="both")
+        LImagen3.config(bg="#719ae2")
+        lp3=tk.Label(fProduct3,text="Belleza\nEsmalte+polvo\n precio $30.000",bg="#ddffab")
+        lp3.pack(expand=True,fill="both")
+        lp3.config(bg="#aecef8", font=letra, fg="black")
+        self.image1=self.interfacePictures("index/VISTA/imagenes/mieltertos.jpg",100,50)
+        fProduct4=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
+        fProduct4.place(relx=0.2,rely=0.35,relheight=0.25, relwidth=0.25,anchor="n")
+        fProduct4.config(bg="#719ae2")
+        LImagen4=tk.Label(fProduct4,image=self.image1)
+        LImagen4.pack(expand=True,fill="both")
+        LImagen4.config(bg="#719ae2")
+        lp4=tk.Label(fProduct4,text="Medicamentos\nMieltertos 1\\n $1.500",bg="#ddffab")
+        lp4.pack(expand=True,fill="both")
+        lp4.config(bg="#aecef8", font=letra, fg="black")
+        self.image3=self.interfacePictures("index/VISTA/imagenes/benet.png",100,50)
+        fProduct5=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
+        fProduct5.place(relx=0.5,rely=0.35,relheight=0.25, relwidth=0.25,anchor="n")
+        fProduct5.config(bg="#719ae2")
+        LImagen5=tk.Label(fProduct5,image=self.image3)
+        LImagen5.pack(expand=True,fill="both")
+        LImagen5.config(bg="#719ae2")
+        lp5=tk.Label(fProduct5,text="Bienestar\nBenet\n $80.000",bg="#ddffab")
+        lp5.pack(expand=True,fill="both")
+        lp5.config(bg="#aecef8", font=letra, fg="black")
+        self.image4=self.interfacePictures("index/VISTA/imagenes/bebe2.png",100,50)
+        fProduct6=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
+        fProduct6.place(relx=0.8,rely=0.35,relheight=0.25, relwidth=0.25,anchor="n")
+        fProduct6.config(bg="#719ae2")
+        LImagen6=tk.Label(fProduct6,image=self.image4)
+        LImagen6.pack(expand=True,fill="both")
+        LImagen6.config(bg="#719ae2")
+        lp6=tk.Label(fProduct6,text="Cuidado del bebé\nCrema N°4\n $10.000",bg="#ddffab")
+        lp6.pack(expand=True,fill="both")
+        lp6.config(bg="#aecef8", font=letra, fg="black")
+        self.image5=self.interfacePictures("index/VISTA/imagenes/hogar.png",100,50)
+        fProduct7=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
+        fProduct7.place(relx=0.2,rely=0.65,relheight=0.25, relwidth=0.25,anchor="n")
+        fProduct7.config(bg="#719ae2")
+        LImagen7=tk.Label(fProduct7,image=self.image5)
+        LImagen7.pack(expand=True,fill="both")
+        LImagen7.config(bg="#719ae2")
+        lp7=tk.Label(fProduct7,text="Hogar\nPapel Familia x12\n $15.000",bg="#ddffab")
+        lp7.pack(expand=True,fill="both")
+        lp7.config(bg="#aecef8", font=letra, fg="black")
+        self.image6=self.interfacePictures("index/VISTA/imagenes/mieltertos2.jpg",100,50)
+        fProduct8=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
+        fProduct8.place(relx=0.5,rely=0.65,relheight=0.25, relwidth=0.25,anchor="n")
+        fProduct8.config(bg="#719ae2")
+        LImagen8=tk.Label(fProduct8,image=self.image6)
+        LImagen8.pack(expand=True,fill="both")
+        LImagen8.config(bg="#719ae2")
+        lp8=tk.Label(fProduct8,text="Medicametos \nMieltertos ped\n $15.000",bg="#ddffab")
+        lp8.pack(expand=True,fill="both")
+        lp8.config(bg="#aecef8", font=letra, fg="black")
+        self.image7=self.interfacePictures("index/VISTA/imagenes/bebe1.jpg",100,50)
+        fProduct9=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
+        fProduct9.place(relx=0.8,rely=0.65,relheight=0.25, relwidth=0.25,anchor="n")
+        fProduct9.config(bg="#719ae2")
+        LImagen9=tk.Label(fProduct9,image=self.image7)
+        LImagen9.pack(expand=True,fill="both")
+        LImagen9.config(bg="#719ae2")
+        lp9=tk.Label(fProduct9,text="Cuidado del bebé\nLeche klim\n $80.000",bg="#ddffab")
+        lp9.pack(expand=True,fill="both")
+        lp9.config(bg="#aecef8", font=letra, fg="black")
+        
+        botonAdd=tk.Button(frmContenidoProductos,text="vender", command=None) #al pulsar debe generar un informe de tipo texto con ayuda del JSON
+        botonAdd.place(relx=0.83,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
+        botonAdd.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
             
-    def mostrarInformes(self,frameContenido):
+    def mostrar_informes(self,frameContenido):
         letra=("Georgia",10, "bold")
         frameEstadisticas=tk.Frame(frameContenido)
         frameEstadisticas.place(relx=0.605,rely=0.13,relheight=0.85, relwidth=0.77,anchor="n")
@@ -429,7 +674,7 @@ class Interfaz:
         botonGenerar.place(relx=0.83,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
         botonGenerar.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
         
-    def mostrarContacto(self,frameContenido):
+    def mostrar_contacto(self,frameContenido):
         frameContacto=tk.Frame(frameContenido)
         frameContacto.place(relx=0.605,rely=0.13,relheight=0.85, relwidth=0.77,anchor="n")
         frameContacto.config(bg="gray")
@@ -437,7 +682,7 @@ class Interfaz:
         labelContacto=tk.Label(frameContacto,image=self.contactoDrogueria)
         labelContacto.pack(expand=True,fill="both")
         
-    def crearPiePagina(self,framePrincipal):
+    def crear_pie_pagina(self,framePrincipal):
         framePiePagina=tk.Frame(framePrincipal, bg="#8bb3e9")
         framePiePagina.config(width=800,height=100)
         framePiePagina.pack(pady=10)
@@ -463,7 +708,7 @@ class Interfaz:
         pieBooks.place(relx=0.9,rely=0.25,relheight=0.5, relwidth=0.2,anchor="n")
         pieBooks.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
         
-    def interfacePictures(self,pic,ancho,altura):
+    def inter_face_pictures(self,pic,ancho,altura):
         image= Image.open(pic).resize((ancho,altura))
         img=ImageTk.PhotoImage(image)
         return img
