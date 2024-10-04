@@ -32,6 +32,3 @@ def verificacionConexion(datoConexion):
         finally:
             cursor.close()
             datoConexion.close()
-        
-aux=crearConexion()
-verificacionConexion(aux)

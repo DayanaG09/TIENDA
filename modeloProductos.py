@@ -4,36 +4,36 @@ import json
 class Producto:
     
     def __init__(self):
-        self.nombreProducto=None
-        self.pkProducto=None
-        self.detalles=None
-        self.categoria=None
-        self.existenciaProducto=None
+        self.idProducto=None
+        self.nombre=None
+        self.existencia=None
         self.cantidadesVendidas=None
-        self.precioProducto=None
+        self.categoria=None
+        self.detalles=None
+        self.precio=None
         
     ## LLave primaria o codigo identificador del producto
-    def getPrimaryKey(self):
-        return self.pkProducto
+    def getIdProducto(self):
+        return self.idProducto
     ##nombre productos  
-    def getNombreProducto(self):
-        return self.nombreProducto
-    def setNombreProducto(self, name):
-        self.nombreProducto= name 
+    def getNombre(self):
+        return self.nombre
+    def setNombre(self, nombre):
+        self.nombre = nombre
     ## Existencia del producto   
     def getExistencia(self):
-        return self.existenciaProducto
+        return self.existencia
     def setExistencia(self, existencia):
-        self.existenciaProducto= existencia 
+        self.existencia= existencia 
     ##Cantidades vendidas
     def getCantidadesVendidas(self):
         return self.cantidadesVendidas
-    def setCantidadesVendidas(self, productosVendidos):
-        self.cantidadesVendidas= productosVendidos 
+    def setCantidadesVendidas(self, cantidadesVendidas):
+        self.cantidadesVendidas= cantidadesVendidas 
     ##categoria
-    def getCategory(self):
+    def getCategoria(self):
         return self.categoria
-    def setCategory(self, categoria):
+    def setCategoria(self, categoria):
         self.categoria= categoria
     #detalles
     def getDetalles(self):
@@ -42,30 +42,32 @@ class Producto:
         self.detalles= detalles
     ##precio productos
     def getPrecio(self):
-        return self.precioProducto
+        return self.precio
     def setPrecio(self, precio):
-        self.precioProducto= precio 
+        self.precio = precio
+        
+    def setProducto(self,listaProductos):
+        self.setNombre(listaProductos[0])
+        self.setExistencia(listaProductos[1])
+        self.setcantidadesVendidas(listaProductos[2])
+        self.setCategoria(listaProductos[3])
+        self.setDetalles(listaProductos[4])
+        self.setPrecio(listaProductos[5])
             
   ###REGISTRAR PRODUCTOS
   #1. SE HACE CONEXION CON LA BASE DE DATOS.  
             
-    def registrarProducto (self, listaProductos):
+    def crearProducto (self, listaProductos):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
-        nombre=listaProductos[0]
-        cantidadExistencia=listaProductos[1]
-        cantidadVendida=listaProductos[2]
-        categoria=listaProductos[3]
-        detalles=listaProductos[4]
-        precioProducto=listaProductos[5]
-        
+                
         #PARA OBTENER LA FECHA ACTUAL - SE USARÁ EN LA VISTA
         #fecha_actual = datetime.now()
         #fecha_formateada = fecha_actual.strftime('%Y-%m-%d %H:%M:%S')
         #from datetime import datetime
         
         try:
-            cursor.execute("INSERT INTO products (nombre__producto,cantidad_existencia,cantidad_vendidas, categoria, detalles,precio_products) VALUES (%s,%s,%s,%s,%s,%s)", (nombre,cantidadExistencia,cantidadVendida,categoria,detalles,precioProducto))
+            cursor.execute("INSERT INTO produco (nombre__producto,cantidad_existencia,cantidad_vendidas, categoria, detalles,precio_products) VALUES (%s,%s,%s,%s,%s,%s)", (self.nombre,self.existencia,self.cantidadesVendidas,self.categoria,self.detalles,self.precio))
             conexion1.commit()
             print("Datos Guardados con exito")
         except Exception as e:
@@ -76,11 +78,11 @@ class Producto:
         
 ##CONSULTAR O BUSCAR PRODUCTOS
 ##2. DESPUES DE TENER YA LOS PRODUCTOS REGISTRADOS PROCEDEMOS A BUSCARLOS.
-    def consultarProducto(self, producto):
+    def consultarProductos(self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
         try:
-            cursor.execute(f"SELECT * FROM products WHERE products = %s", (producto))
+            cursor.execute("SELECT * FROM producto")
             consulta = cursor.fetchall()
             return consulta
         except Exception as e:
@@ -95,7 +97,7 @@ class Producto:
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
         try:
-            cursor.execute(f"SELECT * FROM productos WHERE categoria = %s",(categoria))
+            cursor.execute(f"SELECT * FROM producto WHERE categoria = %s",(categoria))
             consulta = cursor.fetchall()
             return consulta
         except Exception as e:
