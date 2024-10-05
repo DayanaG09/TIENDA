@@ -11,6 +11,7 @@ class Producto:
         self.categoria=None
         self.detalles=None
         self.precio=None
+        self.nombreArchivo=None
         
     ## LLave primaria o codigo identificador del producto
     def get_id_producto(self):
@@ -132,7 +133,7 @@ class Producto:
             cursor.close()
             conexion1.close()
             
-    def consultar_producto(self):
+    def consultar_producto(self): #este metodo debe consultar el producto indicado por el usuario
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
         try:
@@ -146,26 +147,21 @@ class Producto:
             conexion1.close()
     
 ##GENERAR INFORME
-    def crear_archivo(self,datoTitulo,contenidoInforme):
+    def get_nombreArchivo(self):
+        return self.nombreArchivo
+    
+    def set_nombre_archivo(self,auxNombre):
+        self.nombreArchivo=auxNombre
+        
+    def crear_archivo(self,lista_productos,datoTitulo):
         nombreArchivo=datoTitulo+".txt"
         with open(nombreArchivo, 'w', encoding='utf-8') as archivo:
-            json.dump(contenidoInforme, archivo)
+            json.dump(lista_productos, archivo)
         return nombreArchivo
+    
     def leer_archivo(self,auxArchivo):
         with open(auxArchivo,"r") as archivo:
             datoContenido=archivo.read()
-            print(datoContenido)
-            archivo.close()
-    
-    def sobreescribir_archivo(self,auxArchivo):#falta añadir el contenido
-        with open(auxArchivo,"w") as archivo:
-            datoContenido=archivo.write()
-            print(datoContenido)
-            archivo.close()
-            
-    def agregar_al_archivo(self,auxArchivo):#falta añadir el contenido
-        with open(auxArchivo,"a") as archivo:
-            datoContenido=archivo.write()
             print(datoContenido)
             archivo.close()
             

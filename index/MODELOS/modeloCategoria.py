@@ -38,7 +38,7 @@ class Categoria:
             cursor.close()
             conexion1.close()
             
-    def consulta_categoria(self,categoria):
+    def consulta_categoria(self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
         try:
