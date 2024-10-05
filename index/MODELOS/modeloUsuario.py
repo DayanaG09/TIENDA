@@ -30,13 +30,18 @@ class Usuario:
         self.set_celular(listaUsuario[2])
         self.set_cargo(listaUsuario[3])
             
-    def consultar_usuario(self):
+    def consultar_usuarios(self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
+        usuarios=[]
         try:             
             cursor.execute(f"SELECT * FROM usuario")
             consulta = cursor.fetchall()
-            self.set_usuario(consulta)
+            for fila in consulta:
+                usuario=Usuario()
+                usuario.set_usuario(fila)
+                usuarios.append(usuario)
+            return usuarios
         except Exception as e:
             print(f"Error al consultar los usuarios: {e}")    
             return None

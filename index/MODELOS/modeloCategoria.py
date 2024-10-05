@@ -22,10 +22,15 @@ class Categoria:
     def consultar_categorias(self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
+        categorias=[]
         try:             
             cursor.execute(f"SELECT * FROM categoria")
             consulta = cursor.fetchall()
-            self.set_categoria(consulta)     
+            for fila in consulta:
+                categoria=Categoria()
+                categoria.set_categoria(fila)
+                categorias.append(categoria)
+            return categorias
         except Exception as e:
             print(f"Error al consultar la categoria: {e}")    
             return None
@@ -37,9 +42,9 @@ class Categoria:
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
         try:
-            cursor.execute(f"SELECT Id_consulta FROM producto WHERE categoria = %s",(categoria))
+            cursor.execute(f"SELECT Nombre_categoria FROM categoria WHERE Id_categoria = %s",(self.id))
             consulta = cursor.fetchall()
-            self.set_id(consulta)
+            self.set_nombre(consulta)
         except Exception as e:
             print(f"Error al consultar las categorías: {e}")
             return None

@@ -116,13 +116,31 @@ class Producto:
     def consultar_productos(self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
+        productos = []
+        try:
+            cursor.execute("SELECT * FROM producto")
+            consulta = cursor.fetchall()
+            for fila in consulta:
+                producto=Producto()
+                producto.set_producto(fila)
+                productos.append(producto)
+            return productos
+        except Exception as e:
+            print(f"Error al consultar los productos: {e}")
+            return None
+        finally:
+            cursor.close()
+            conexion1.close()
+            
+    def consultar_producto(self):
+        conexion1 = crearConexion()
+        cursor = conexion1.cursor()
         try:
             cursor.execute("SELECT * FROM producto")
             consulta = cursor.fetchall()
             self.set_producto(consulta)
         except Exception as e:
             print(f"Error al consultar los productos: {e}")
-            return None
         finally:
             cursor.close()
             conexion1.close()
