@@ -31,12 +31,30 @@ class Controlador:
         self.objModeloProducto.set_producto(lista_productos_datos)    
         validar_consulta=self.objModeloProducto.eliminar_producto()
         return validar_consulta
+    
+    def consultar_producto(self,producto):
+        self.objModeloProducto.set_id_producto(producto)
+        self.objModeloProducto.consultar_producto()
+        producto_nuevo=self.objModeloProducto.get_nombre()
+        return producto_nuevo
         
-    def consulta_productos(self):
-        consulta_producto=self.objModeloUsuario.consultar_producto()
+    def consultar_productos(self):
+        consulta_producto=self.objModeloUsuario.consultar_productos()
         return consulta_producto
+    
+    def consulta_categoria(self,categoria):
+        self.objModeloCategoria.set_id(categoria)
+        self.objModeloCategoria.consulta_categoria()
+        categoria_nueva=self.objModeloCategoria.get_id()
+        return categoria_nueva
         
-    def consulta_categoria(self):
-        consulta_categoria=self.objModeloCategoria.consultar_categoria()
+    def consultar_categoria(self):
+        consulta_categoria=self.objModeloCategoria.consultar_categorias()
         return consulta_categoria
+    
+    def crear_archivo(self):
+        datoUsuario=self.objModelo.get_listaUsuarios()
+        datoTitulo=self.objModelo.get_nombreArchivo()
+        archivoCreado=self.objModelo.crearArchivo(datoUsuario,datoTitulo)
+        self.objModelo.leerArchivo(archivoCreado)
     
