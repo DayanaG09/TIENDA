@@ -22,7 +22,7 @@ class Controlador:
         
     def modificar_producto(self,lista_productos):
         lista_productos_datos=lista_productos
-        self.objModeloProducto.setProducto(lista_productos_datos)    
+        self.objModeloProducto.set_producto(lista_productos_datos)    
         validar_consulta=self.objModeloProducto.modificar_producto()
         return validar_consulta
         
@@ -39,7 +39,7 @@ class Controlador:
         return producto_nuevo
         
     def consultar_productos(self):
-        consulta_producto=self.objModeloUsuario.consultar_productos()
+        consulta_producto=self.objModeloProducto.consultar_productos()
         return consulta_producto
     
     def consulta_categoria(self,categoria):
@@ -53,8 +53,12 @@ class Controlador:
         return consulta_categoria
     
     def crear_archivo(self):
-        datoUsuario=self.objModelo.get_listaUsuarios()
-        datoTitulo=self.objModelo.get_nombreArchivo()
-        archivoCreado=self.objModelo.crearArchivo(datoUsuario,datoTitulo)
-        self.objModelo.leerArchivo(archivoCreado)
+        datoProducto=self.objModeloProducto.get_id_producto()
+        datoTitulo=self.objModeloProducto.get_nombreArchivo()
+        archivoCreado=self.objModeloProducto.crearArchivo(datoProducto,datoTitulo)
+        self.objModeloProducto.leerArchivo(archivoCreado)
+        
+    def deserializar(self,datoTitulo):
+            auxDatoCreado=self.objModeloProducto.deserializar(datoTitulo)
+            return auxDatoCreado
     
