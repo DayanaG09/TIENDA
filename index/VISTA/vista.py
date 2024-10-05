@@ -493,64 +493,96 @@ class Interfaz:
         boton_eliminar.pack(pady=15)
 
     def modificar_producto(self):
-        
-        ##### ACA ES DONDE ESTA EL MIERDERO 
         self.letra = ("Georgia", 12, "bold")
-        self.ventana_modificar = tk.Tk()  # Corrección aquí
+        self.ventana_modificar = tk.Tk()
         self.ventana_modificar.title("MODIFICAR PRODUCTOS")
-        self.ventana_modificar.geometry('700x1000')
+        self.ventana_modificar.geometry('800x600')
 
-        frameTitulo=tk.Frame(self.ventana_modificar)
-        frameTitulo.place(relx=0.5,rely=0,relheight=0.250, relwidth=100, anchor="n")
-        labelTitulo=tk.Label(frameTitulo,bg= "white", text="MODIFICAR PRODUCTO")
+        frameTitulo = tk.Frame(self.ventana_modificar)
+        frameTitulo.place(relx=0.5, rely=0, relheight=0.1, relwidth=1, anchor="n")
+        labelTitulo = tk.Label(frameTitulo, bg="white", text="MODIFICAR PRODUCTO")
         labelTitulo.config(font=self.letra, fg="#d6022a")
-        labelTitulo.pack(expand=True,fill="both")
-        
-        frame_treeview=tk.Frame(self.ventana_modificar, bg="white")
-        frame_treeview.place(relx=0.5,rely=0.25,relheight=0.7, relwidth=0.65, anchor="n")
-        
-        frame_labels=tk.Frame(self.ventana_modificar, bg="#96c7e6")
-        frame_labels.place(relx=0.7,rely=0.25,relheight=0.7, relwidth=0.65, anchor="n")
+        labelTitulo.pack(expand=True, fill="both")
 
-        modificar = ttk.Treeview(frame_treeview, columns=("codigo", "producto", "precio"), show='headings')  # Corrección aquí
-        modificar.heading("codigo", text="CODIGO")
-        modificar.heading("producto", text="Nombre Producto")
-        modificar.heading("precio", text="precio")
-        #se abre la ventana de modificacion.
-        modificar.column("codigo", width=100)
-        modificar.column("producto", width=100)
-        modificar.column("precio", width=100)
-        modificar.pack() # Asegúrate de empaquetar el Treeview
-        
-        labelNombre=tk.Label(frame_labels, bg= "#96c7e6",text="Nombre del producto")
-        labelNombre.config(font=self.letra)
-        labelNombre.pack(pady=0.3)
-        self.nombre_med=tk.StringVar()
-        entryNombre=tk.Entry(frame_labels,textvariable=self.nombre_med)
-        entryNombre.pack(pady=15)
-        
-        label_cantidad=tk.Label(frame_labels , bg= "#96c7e6",text="Cantidad")
-        label_cantidad.config(font=self.letra)
-        label_cantidad.pack(pady=15)
-        self.cantidad=tk.StringVar()
-        entry_cantidad=tk.Entry(frame_labels,textvariable=self.cantidad)
-        entry_cantidad.pack(pady=15)
-        
-        label_categoria=tk.Label(frame_labels , bg= "#96c7e6",text="Categoria")
-        label_categoria.config(font=self.letra)
-        label_categoria.pack(pady=15)
-        self.categoria=tk.StringVar()
-        entry_cat=ttk.check(frame_labels,textvariable=self.categoria)
-        entry_cat.pack(pady=15)
-        
-        
+        frame_treeview = tk.Frame(self.ventana_modificar, bg="white")
+        frame_treeview.place(relx=0.1, rely=0.15, relheight=0.7, relwidth=0.4, anchor="nw")
 
-        # Botón para eliminar el producto
-        boton_modificar = tk.Button(frame_labels, text="Modificar Producto",
-                                   command=lambda: self.modificar_producto("codigo, nombre, precio"),  # Corrección aquí
-                                   bg="#d6022a")
-        boton_modificar.config(font=self.letra, fg="white")
+        frame_labels = tk.Frame(self.ventana_modificar, bg="#96c7e6")
+        frame_labels.place(relx=0.55, rely=0.15, relheight=0.7, relwidth=0.4, anchor="nw")
+
+        # Crear Treeview
+        self.modificar = ttk.Treeview(frame_treeview, columns=("nombre", "cantidad_existencia", "cantidad_vendidas", "id_categoria", "detalles", "precio_productos"), show='headings')
+        self.modificar.heading("nombre", text="Nombre Producto")
+        self.modificar.heading("cantidad_existencia", text="Cantidad Existencia")
+        self.modificar.heading("cantidad_vendidas", text="Cantidad Vendidas")
+        self.modificar.heading("id_categoria", text="ID Categoría")
+        self.modificar.heading("detalles", text="Detalles")
+        self.modificar.heading("precio_productos", text="Precio")
+        
+        self.modificar.pack(expand=True, fill="both")
+        
+        # Llenar Treeview con datos de la base de datos
+        self.cargar_productos_en_treeview()
+
+        # Seleccionar producto del Treeview
+        self.modificar.bind("<ButtonRelease-1>", self.cargar_datos_en_entries)
+
+        # Entradas para modificar producto
+        self.nombre_med = tk.StringVar()
+        self.cantidadExistencia = tk.StringVar()
+        self.cantidadVendidas = tk.StringVar()
+        self.id_categoria = tk.StringVar()
+        self.detalles = tk.StringVar()
+        self.precio_productos = tk.StringVar()
+
+        labels = ["Nombre del producto", "Cantidad Existencia", "Cantidad Vendidas", "ID Categoría", "Detalles", "Precio"]
+        vars = [self.nombre_med, self.cantidadExistencia, self.cantidadVendidas, self.id_categoria, self.detalles, self.precio_productos]
+
+        for label, var in zip(labels, vars):
+            tk.Label(frame_labels, text=label, bg="#96c7e6").pack(pady=5)
+            tk.Entry(frame_labels, textvariable=var).pack(pady=5)
+
+        # Botón para modificar el producto
+        boton_modificar = tk.Button(frame_labels, text="Modificar Producto", command=self.confirmar_modificacion, bg="#d6022a", fg="white")
         boton_modificar.pack(pady=15)
+
+    def cargar_productos_en_treeview(self):
+        productos = self.modelo.consultar_productos()  # Llama a tu método
+        if productos:
+            for producto in productos:
+                # Supongamos que el producto tiene un método para obtener sus datos
+                self.modificar.insert("", "end", values=(producto.id, producto.nombre, producto.precio))
+
+    def cargar_datos_en_entries(self, event):
+        selected_item = self.modificar.selection()[0]
+        item_values = self.modificar.item(selected_item, 'values')
+        
+        # Asignar valores a los Entry
+        self.nombre_med.set(item_values[0])
+        self.cantidadExistencia.set(item_values[1])
+        self.cantidadVendidas.set(item_values[2])
+        self.id_categoria.set(item_values[3])
+        self.detalles.set(item_values[4])
+        self.precio_productos.set(item_values[5])
+
+    def confirmar_modificacion(self):
+        # Obtener los datos de los Entry
+        nombre = self.nombre_med.get()
+        cantidad_existencia = self.cantidadExistencia.get()
+        cantidad_vendidas = self.cantidadVendidas.get()
+        id_categoria = self.id_categoria.get()
+        detalles = self.detalles.get()
+        precio = self.precio_productos.get()
+
+        # Llamar al controlador para modificar el producto
+        resultado = self.controlador.modificar_producto(nombre, cantidad_existencia, cantidad_vendidas, id_categoria, detalles, precio)
+
+        if resultado:
+            tk.messagebox.showinfo("Éxito", "El producto fue modificado exitosamente.")
+            self.cargar_productos_en_treeview()  # Actualiza el Treeview después de modificar
+        else:
+            tk.messagebox.showerror("Error", "Hubo un problema al modificar el producto.")
+
     
     def mostrar_productos_vendedor(self,frameContenido):
         self.letra=("Georgia",10, "bold")
