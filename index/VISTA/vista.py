@@ -5,7 +5,8 @@ from tkinter import ttk
 from PIL import ImageTk, Image
 
 class Interfaz:
-    def __init__(self):
+    def __init__(self,objControlador):
+        self.objControlador=objControlador
         self.ventanaLogin=None
         self.nombreUsuario=None
         self.documentoUsuario=None
@@ -13,7 +14,6 @@ class Interfaz:
         self.ventana_eliminar=None
         self.ventana_modificar=None
         self.cargoUsuario=None
-        self.objControlador=None
         self.logo=None
         self.reproducir=None
         self.pastilla=None
@@ -31,9 +31,6 @@ class Interfaz:
         self.images=None
         self.contactoDrogueria=None
         self.letra=None
-       
-    def set_controlador(self,controlador):
-        self.objControlador=controlador
 
     def ventana_ingreso(self):
         self.ventanaLogin=tk.Tk()
@@ -95,8 +92,8 @@ class Interfaz:
             documento=self.documentoUsuario.get()
             cargo=self.cargoUsuario.get()
 
-            if not nombre.isalpha():
-                raise ValueError("El nombre solo debe contener letras")
+            if not all(char.isalpha() or char.isspace() for char in nombre):
+                raise ValueError("El nombre solo debe contener letras y espacios")
             
             if not documento.isdigit():
                 raise ValueError("El documento solo debe contener números")
@@ -104,19 +101,23 @@ class Interfaz:
             if not nombre or not documento:
                 raise ValueError("Los campos deben ser llenados correctamente")
             
-            if not cargo:  # Verificar si se ha seleccionado un rol
+            if not cargo:
                 raise ValueError("Por favor, seleccione un rol")
             
-            if cargo == "Administrador":
+            if not self.objControlador.validar_rol_usuario(documento, cargo):
+                raise ValueError(f"El rol seleccionado '{cargo}' no es válido para el usuario '{nombre}'.")
+            
+            x=1
+            listaUsuario=[documento,nombre,x,cargo]
+            
+            if self.objControlador.validar_inicio_sesion(listaUsuario):
                 self.ventanaLogin.withdraw()
-                self.ventana_home_admin()
-            elif cargo == "Vendedor":
-                self.ventanaLogin.withdraw()
-                self.ventana_home_vendedor()
+                if cargo == "Administrador":
+                    self.ventana_home_admin()
+                elif cargo == "Vendedor":
+                    self.ventana_home_vendedor()
             else:
                 messagebox.showerror("Error", "Usuario o contraseña incorrectos")
-        
-            #self.objControlador.inicioSesion(nombre,documento)
         except ValueError as e:
             messagebox.showerror("Error",str(e))
             
@@ -459,7 +460,7 @@ class Interfaz:
 
         # Botón para registrar el producto
         boton_crear = tk.Button(self.ventana_crear, text="REGISTRAR PRODUCTO",
-                                command=lambda: self.crear_producto(codigo, nombre, precio),  # Pasar parámetros correctamente
+                                command=lambda: self.crear_producto("codigo, nombre, precio"),  # Pasar parámetros correctamente
                                 bg="#d6022a")
         boton_crear.config(font=self.letra, fg="white")
         boton_crear.pack(pady=15)
@@ -486,7 +487,7 @@ class Interfaz:
 
         # Botón para eliminar el producto
         boton_eliminar = tk.Button(self.ventana_eliminar, text="Eliminar Producto",
-                                   command=lambda: self.eliminar_producto(codigo, nombre, precio),  # Corrección aquí
+                                   command=lambda: self.eliminar_producto("codigo, nombre, precio"),  # Corrección aquí
                                    bg="#d6022a")
         boton_eliminar.config(font=self.letra, fg="white")
         boton_eliminar.pack(pady=15)
@@ -546,7 +547,7 @@ class Interfaz:
 
         # Botón para eliminar el producto
         boton_modificar = tk.Button(frame_labels, text="Modificar Producto",
-                                   command=lambda: self.modificar_producto(codigo, nombre, precio),  # Corrección aquí
+                                   command=lambda: self.modificar_producto("codigo, nombre, precio"),  # Corrección aquí
                                    bg="#d6022a")
         boton_modificar.config(font=self.letra, fg="white")
         boton_modificar.pack(pady=15)
@@ -800,8 +801,3 @@ class Interfaz:
         
     def activar_mainloop(self):
         tk.mainloop()
-        
-
-Ventana=Interfaz()
-Ventana.ventana_ingreso()
-Ventana.activar_mainloop()

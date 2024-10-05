@@ -1,7 +1,6 @@
-from index.MODELOS.basededatos import crearConexion
-
 class Usuario:
-    def __init__ (self):
+    def __init__ (self,conexion):
+        self.conexion=conexion
         self.idUsuario=None
         self.nombre=None
         self.celular=None
@@ -31,14 +30,13 @@ class Usuario:
         self.set_cargo(listaUsuario[3])
             
     def consultar_usuarios(self):
-        conexion1 = crearConexion()
-        cursor = conexion1.cursor()
+        cursor = self.conexion.cursor()
         usuarios=[]
         try:             
             cursor.execute(f"SELECT * FROM usuario")
             consulta = cursor.fetchall()
             for fila in consulta:
-                usuario=Usuario()
+                usuario=Usuario(self.conexion)
                 usuario.set_usuario(fila)
                 usuarios.append(usuario)
             return usuarios
@@ -47,13 +45,27 @@ class Usuario:
             return None
         finally:    
             cursor.close()
-            conexion1.close()
+            
+    def obtener_usuario_por_documento(self, documento):
+        cursor = self.conexion.cursor()
+        try:
+            cursor.execute("SELECT * FROM usuario WHERE Id_usuario = %s", (documento,))
+            fila = cursor.fetchone()
+            if fila:
+                usuario = Usuario(self.conexion)
+                usuario.set_usuario(fila)
+                return usuario
+            return None
+        except Exception as e:
+            print(f"Error al obtener el usuario: {e}")
+            return None
+        finally:
+            cursor.close()
             
     def validar_usuario(self):
-        conexion1 = crearConexion()
-        cursor = conexion1.cursor()
+        cursor = self.conexion.cursor()
         try:             
-            cursor.execute(f"SELECT Id_usuario, Nombre FROM usuario WHERE Id_usuario = %s AND Nombre = %s", (self.idUsuario,self.nombre))
+            cursor.execute(f"SELECT * FROM usuario WHERE Id_usuario = %s AND Nombre = %s AND Cargo = %s", (self.idUsuario,self.nombre, self.cargo))
             consulta = cursor.fetchall()
             return len(consulta)>0
         except Exception as e:
@@ -61,4 +73,3 @@ class Usuario:
             return False
         finally:    
             cursor.close()
-            conexion1.close()
