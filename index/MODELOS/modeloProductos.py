@@ -50,12 +50,13 @@ class Producto:
         self.precio = precio
         
     def set_producto(self,listaProductos):
-        self.set_nombre(listaProductos[0])
-        self.set_existencia(listaProductos[1])
-        self.set_cantidades_vendidas(listaProductos[2])
-        self.set_categoria(listaProductos[3])
-        self.set_detalles(listaProductos[4])
-        self.set_precio(listaProductos[5])
+        self.set_id_producto(listaProductos[0])
+        self.set_nombre(listaProductos[1])
+        self.set_existencia(listaProductos[2])
+        self.set_cantidades_vendidas(listaProductos[3])
+        self.set_categoria(listaProductos[4])
+        self.set_detalles(listaProductos[5])
+        self.set_precio(listaProductos[6])
             
   ###REGISTRAR PRODUCTOS   
     def crear_producto (self):

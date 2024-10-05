@@ -104,9 +104,6 @@ class Interfaz:
             if not cargo:
                 raise ValueError("Por favor, seleccione un rol")
             
-            if not self.objControlador.validar_rol_usuario(documento, cargo):
-                raise ValueError(f"El rol seleccionado '{cargo}' no es válido para el usuario '{nombre}'.")
-            
             x=1
             listaUsuario=[documento,nombre,x,cargo]
             
@@ -117,7 +114,7 @@ class Interfaz:
                 elif cargo == "Vendedor":
                     self.ventana_home_vendedor()
             else:
-                messagebox.showerror("Error", "Usuario o contraseña incorrectos")
+                messagebox.showerror("Error", "Usuario,contraseña o cargo incorrecto")
         except ValueError as e:
             messagebox.showerror("Error",str(e))
             
@@ -498,90 +495,130 @@ class Interfaz:
         self.ventana_modificar.title("MODIFICAR PRODUCTOS")
         self.ventana_modificar.geometry('800x600')
 
+        self.crear_titulo()
+        self.crear_treeview()
+        self.crear_formulario()
+
+    def crear_titulo(self):
         frameTitulo = tk.Frame(self.ventana_modificar)
         frameTitulo.place(relx=0.5, rely=0, relheight=0.1, relwidth=1, anchor="n")
         labelTitulo = tk.Label(frameTitulo, bg="white", text="MODIFICAR PRODUCTO")
         labelTitulo.config(font=self.letra, fg="#d6022a")
         labelTitulo.pack(expand=True, fill="both")
 
+    def crear_treeview(self):
         frame_treeview = tk.Frame(self.ventana_modificar, bg="white")
-        frame_treeview.place(relx=0.1, rely=0.15, relheight=0.7, relwidth=0.4, anchor="nw")
+        frame_treeview.place(relx=0.05, rely=0.15, relheight=0.55, relwidth=0.9, anchor="nw")
 
-        frame_labels = tk.Frame(self.ventana_modificar, bg="#96c7e6")
-        frame_labels.place(relx=0.55, rely=0.15, relheight=0.7, relwidth=0.4, anchor="nw")
+        # Definir el Treeview
+        self.tabla_productos = ttk.Treeview(frame_treeview, columns=("id", "nombre_producto", "cantidad_existencia", "cantidad_vendidas", "id_categoria", "detalles", "precio_productos"), show='headings')
+        
+        # Establecer encabezados
+        headings = ["ID", "Nombre Producto", "Cantidad Existencia", "Cantidad Vendidas", "ID Categoría", "Detalles", "Precio"]
+        for i, heading in enumerate(headings):
+            self.tabla_productos.heading(self.tabla_productos["columns"][i], text=heading)
 
-        # Crear Treeview
-        self.modificar = ttk.Treeview(frame_treeview, columns=("nombre", "cantidad_existencia", "cantidad_vendidas", "id_categoria", "detalles", "precio_productos"), show='headings')
-        self.modificar.heading("nombre", text="Nombre Producto")
-        self.modificar.heading("cantidad_existencia", text="Cantidad Existencia")
-        self.modificar.heading("cantidad_vendidas", text="Cantidad Vendidas")
-        self.modificar.heading("id_categoria", text="ID Categoría")
-        self.modificar.heading("detalles", text="Detalles")
-        self.modificar.heading("precio_productos", text="Precio")
-        
-        self.modificar.pack(expand=True, fill="both")
-        
-        # Llenar Treeview con datos de la base de datos
+        self.tabla_productos.pack(expand=True, fill="both")
         self.cargar_productos_en_treeview()
+        self.tabla_productos.bind("<<TreeviewSelect>>", self.selecciona_producto)
 
-        # Seleccionar producto del Treeview
-        self.modificar.bind("<ButtonRelease-1>", self.cargar_datos_en_entries)
+    def crear_formulario(self):
+        frame_labels = tk.Frame(self.ventana_modificar, bg="#96c7e6")
+        frame_labels.place(relx=0.05, rely=0.72, relheight=0.25, relwidth=0.9, anchor="nw")
 
-        # Entradas para modificar producto
-        self.nombre_med = tk.StringVar()
-        self.cantidadExistencia = tk.StringVar()
-        self.cantidadVendidas = tk.StringVar()
-        self.id_categoria = tk.StringVar()
-        self.detalles = tk.StringVar()
-        self.precio_productos = tk.StringVar()
+        # Contenedor para la primera fila de los widgets
+        first_row = tk.Frame(frame_labels, bg="#96c7e6")
+        first_row.pack(pady=5)
 
-        labels = ["Nombre del producto", "Cantidad Existencia", "Cantidad Vendidas", "ID Categoría", "Detalles", "Precio"]
-        vars = [self.nombre_med, self.cantidadExistencia, self.cantidadVendidas, self.id_categoria, self.detalles, self.precio_productos]
+        # NOMBRE
+        labelNombre = tk.Label(first_row, text="Nombre")
+        labelNombre.pack(side=tk.LEFT, padx=5)
+        self.auxNombre = tk.StringVar()
+        self.entry_nombre = tk.Entry(first_row, textvariable=self.auxNombre)
+        self.entry_nombre.pack(side=tk.LEFT, padx=5)
 
-        for label, var in zip(labels, vars):
-            tk.Label(frame_labels, text=label, bg="#96c7e6").pack(pady=5)
-            tk.Entry(frame_labels, textvariable=var).pack(pady=5)
+        # CANTIDAD EXISTENCIA
+        label_cantidadE = tk.Label(first_row, text="Cantidad Existencia")
+        label_cantidadE.pack(side=tk.LEFT, padx=5)
+        self.aux_existenciaE = tk.StringVar()
+        self.entry_cantidadE = tk.Entry(first_row, textvariable=self.aux_existenciaE)
+        self.entry_cantidadE.pack(side=tk.LEFT, padx=5)
 
-        # Botón para modificar el producto
+        # CANTIDAD VENDIDAS
+        label_cantidadV = tk.Label(first_row, text="Cantidad Vendidas")
+        label_cantidadV.pack(side=tk.LEFT, padx=5)
+        self.aux_vendidas = tk.StringVar()
+        self.entry_cantidadV = tk.Entry(first_row, textvariable=self.aux_vendidas)
+        self.entry_cantidadV.pack(side=tk.LEFT, padx=5)
+
+        # Contenedor para la segunda fila de los widgets
+        second_row = tk.Frame(frame_labels, bg="#96c7e6")
+        second_row.pack(pady=5)
+
+        # CATEGORIAS
+        labelCategoria = tk.Label(second_row, text="Categoría")
+        labelCategoria.pack(side=tk.LEFT, padx=5)
+        self.aux_categoria = tk.StringVar()
+        self.entry_cat = tk.Entry(second_row, textvariable=self.aux_categoria)
+        self.entry_cat.pack(side=tk.LEFT, padx=5)
+
+        # DETALLES
+        label_detalles = tk.Label(second_row, text="Detalles")
+        label_detalles.pack(side=tk.LEFT, padx=5)
+        self.aux_detalles = tk.StringVar()
+        self.entry_detalles = tk.Entry(second_row, textvariable=self.aux_detalles)
+        self.entry_detalles.pack(side=tk.LEFT, padx=5)
+
+        # PRECIO
+        label_precio = tk.Label(second_row, text="Precio")
+        label_precio.pack(side=tk.LEFT, padx=5)
+        self.aux_precio = tk.StringVar()
+        self.entry_precio = tk.Entry(second_row, textvariable=self.aux_precio)
+        self.entry_precio.pack(side=tk.LEFT, padx=5)
+
+        # Botón para modificar
         boton_modificar = tk.Button(frame_labels, text="Modificar Producto", command=self.confirmar_modificacion, bg="#d6022a", fg="white")
         boton_modificar.pack(pady=15)
 
     def cargar_productos_en_treeview(self):
-        productos = self.modelo.consultar_productos()  # Llama a tu método
+        productos = self.objControlador.consultar_productos()
         if productos:
             for producto in productos:
-                # Supongamos que el producto tiene un método para obtener sus datos
-                self.modificar.insert("", "end", values=(producto.id, producto.nombre, producto.precio))
+                self.tabla_productos.insert("", "end", values=(
+                    producto.get_id_producto(),
+                    producto.get_nombre(),
+                    producto.get_existencia(),
+                    producto.get_cantidades_vendidas(),
+                    producto.get_categoria(),
+                    producto.get_detalles(),
+                    producto.get_precio()
+                ))
+                print(producto)
 
-    def cargar_datos_en_entries(self, event):
-        selected_item = self.modificar.selection()[0]
-        item_values = self.modificar.item(selected_item, 'values')
-        
-        # Asignar valores a los Entry
-        self.nombre_med.set(item_values[0])
-        self.cantidadExistencia.set(item_values[1])
-        self.cantidadVendidas.set(item_values[2])
-        self.id_categoria.set(item_values[3])
-        self.detalles.set(item_values[4])
-        self.precio_productos.set(item_values[5])
+    def selecciona_producto(self, event=None):
+        seleccionado = self.tabla_productos.selection()
+        if seleccionado:
+            item = self.tabla_productos.item(seleccionado[0])
+            values = item['values']
+
+            # Asignar los valores a las variables StringVar
+            self.auxNombre.set(values[1])
+            self.aux_existenciaE.set(values[2])
+            self.aux_vendidas.set(values[3])
+            self.aux_categoria.set(values[4])
+            self.aux_detalles.set(values[5])
+            self.aux_precio.set(values[6])
 
     def confirmar_modificacion(self):
-        # Obtener los datos de los Entry
-        nombre = self.nombre_med.get()
-        cantidad_existencia = self.cantidadExistencia.get()
-        cantidad_vendidas = self.cantidadVendidas.get()
-        id_categoria = self.id_categoria.get()
-        detalles = self.detalles.get()
-        precio = self.precio_productos.get()
-
-        # Llamar al controlador para modificar el producto
-        resultado = self.controlador.modificar_producto(nombre, cantidad_existencia, cantidad_vendidas, id_categoria, detalles, precio)
+        datos_modificados = [self.auxNombre.get(), self.aux_existenciaE.get(), self.aux_vendidas.get(), self.aux_categoria.get(), self.aux_detalles.get(), self.aux_precio.get()]
+        resultado = self.objControlador.modificar_producto(datos_modificados)
 
         if resultado:
             tk.messagebox.showinfo("Éxito", "El producto fue modificado exitosamente.")
-            self.cargar_productos_en_treeview()  # Actualiza el Treeview después de modificar
+            self.cargar_productos_en_treeview()
         else:
             tk.messagebox.showerror("Error", "Hubo un problema al modificar el producto.")
+
 
     
     def mostrar_productos_vendedor(self,frameContenido):
