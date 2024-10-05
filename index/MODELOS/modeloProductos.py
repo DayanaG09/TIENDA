@@ -67,7 +67,7 @@ class Producto:
         #from datetime import datetime
         
         try:
-            cursor.execute("INSERT INTO produco (nombre__producto,cantidad_existencia,cantidad_vendidas, Id_categoria, detalles,precio_products) VALUES (%s,%s,%s,%s,%s,%s)", (self.nombre,self.existencia,self.cantidadesVendidas,self.categoria,self.detalles,self.precio))
+            cursor.execute("INSERT INTO producto (nombre__producto,cantidad_existencia,cantidad_vendidas, Id_categoria, detalles,precio_products) VALUES (%s,%s,%s,%s,%s,%s)", (self.nombre,self.existencia,self.cantidadesVendidas,self.categoria,self.detalles,self.precio))
             self.conexion.commit()
             print("Datos Guardados con exito")
         except Exception as e:
