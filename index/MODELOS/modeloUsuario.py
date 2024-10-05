@@ -46,21 +46,6 @@ class Usuario:
         finally:    
             cursor.close()
             
-    def obtener_usuario_por_documento(self, documento):
-        cursor = self.conexion.cursor()
-        try:
-            cursor.execute("SELECT * FROM usuario WHERE Id_usuario = %s", (documento,))
-            fila = cursor.fetchone()
-            if fila:
-                usuario = Usuario(self.conexion)
-                usuario.set_usuario(fila)
-                return usuario
-            return None
-        except Exception as e:
-            print(f"Error al obtener el usuario: {e}")
-            return None
-        finally:
-            cursor.close()
             
     def validar_usuario(self):
         cursor = self.conexion.cursor()

@@ -10,12 +10,6 @@ class Controlador:
         validacion_consulta=self.objModeloUsuario.validar_usuario()
         return validacion_consulta
     
-    def validar_rol_usuario(self, documento, cargo):
-        usuario = self.objModeloUsuario.obtener_usuario_por_documento(documento)
-        if usuario:
-            return usuario.get_cargo() == cargo
-        return False
-    
     def consultar_usuarios(self):
         consultaUsuario=self.objModeloUsuario.consultar_usuario()
         return consultaUsuario
