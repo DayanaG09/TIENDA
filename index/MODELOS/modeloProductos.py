@@ -13,49 +13,51 @@ class Producto:
         self.precio=None
         
     ## LLave primaria o codigo identificador del producto
-    def getIdProducto(self):
+    def get_id_producto(self):
         return self.idProducto
+    def set_id_producto(self,idProducto):
+        self.idProducto=idProducto
     ##nombre productos  
-    def getNombre(self):
+    def get_nombre(self):
         return self.nombre
-    def setNombre(self, nombre):
+    def set_nombre(self, nombre):
         self.nombre = nombre
     ## Existencia del producto   
-    def getExistencia(self):
+    def get_existencia(self):
         return self.existencia
-    def setExistencia(self, existencia):
+    def set_existencia(self, existencia):
         self.existencia= existencia 
     ##Cantidades vendidas
-    def getCantidadesVendidas(self):
+    def get_cantidades_vendidas(self):
         return self.cantidadesVendidas
-    def setCantidadesVendidas(self, cantidadesVendidas):
+    def set_cantidades_vendidas(self, cantidadesVendidas):
         self.cantidadesVendidas= cantidadesVendidas 
     ##categoria
-    def getCategoria(self):
+    def get_categoria(self):
         return self.categoria
-    def setCategoria(self, categoria):
+    def set_categoria(self, categoria):
         self.categoria= categoria
     #detalles
-    def getDetalles(self):
+    def get_detalles(self):
         return self.detalles
-    def setDetalles(self, detalles):
+    def set_detalles(self, detalles):
         self.detalles= detalles
     ##precio productos
-    def getPrecio(self):
+    def get_precio(self):
         return self.precio
-    def setPrecio(self, precio):
+    def set_precio(self, precio):
         self.precio = precio
         
-    def setProducto(self,listaProductos):
-        self.setNombre(listaProductos[0])
-        self.setExistencia(listaProductos[1])
-        self.setcantidadesVendidas(listaProductos[2])
-        self.setCategoria(listaProductos[3])
-        self.setDetalles(listaProductos[4])
-        self.setPrecio(listaProductos[5])
+    def set_producto(self,listaProductos):
+        self.set_nombre(listaProductos[0])
+        self.set_existencia(listaProductos[1])
+        self.set_cantidades_vendidas(listaProductos[2])
+        self.set_categoria(listaProductos[3])
+        self.set_detalles(listaProductos[4])
+        self.set_precio(listaProductos[5])
             
   ###REGISTRAR PRODUCTOS   
-    def crearProducto (self):
+    def crear_producto (self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
                 
@@ -74,7 +76,7 @@ class Producto:
             cursor.close()
             conexion1.close()
     
-    def modificarProducto(self):
+    def modificar_producto(self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
         try:
@@ -94,7 +96,7 @@ class Producto:
             cursor.close()
             conexion1.close()
 
-    def eliminarProducto(self):
+    def eliminar_producto(self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
         try:
@@ -111,13 +113,18 @@ class Producto:
 
         
 ##CONSULTAR O BUSCAR PRODUCTOS
-    def consultarProductos(self):
+    def consultar_productos(self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
+        productos = []
         try:
             cursor.execute("SELECT * FROM producto")
             consulta = cursor.fetchall()
-            return consulta
+            for fila in consulta:
+                producto=Producto()
+                producto.set_producto(fila)
+                productos.append(producto)
+            return productos
         except Exception as e:
             print(f"Error al consultar los productos: {e}")
             return None
@@ -125,40 +132,38 @@ class Producto:
             cursor.close()
             conexion1.close()
             
-###CONSULTA DE CATEGORIA
-    def consultaCategoria(self,categoria):
+    def consultar_producto(self):
         conexion1 = crearConexion()
         cursor = conexion1.cursor()
         try:
-            cursor.execute(f"SELECT * FROM producto WHERE categoria = %s",(categoria))
+            cursor.execute("SELECT * FROM producto")
             consulta = cursor.fetchall()
-            return consulta
+            self.set_producto(consulta)
         except Exception as e:
-            print(f"Error al consultar las categorías: {e}")
-            return None
+            print(f"Error al consultar los productos: {e}")
         finally:
             cursor.close()
             conexion1.close()
     
 ##GENERAR INFORME
-    def crearArchivo(self,datoTitulo,contenidoInforme):
+    def crear_archivo(self,datoTitulo,contenidoInforme):
         nombreArchivo=datoTitulo+".txt"
         with open(nombreArchivo, 'w', encoding='utf-8') as archivo:
             json.dump(contenidoInforme, archivo)
         return nombreArchivo
-    def leerArchivo(self,auxArchivo):
+    def leer_archivo(self,auxArchivo):
         with open(auxArchivo,"r") as archivo:
             datoContenido=archivo.read()
             print(datoContenido)
             archivo.close()
     
-    def sobreescribirArchivo(self,auxArchivo):#falta añadir el contenido
+    def sobreescribir_archivo(self,auxArchivo):#falta añadir el contenido
         with open(auxArchivo,"w") as archivo:
             datoContenido=archivo.write()
             print(datoContenido)
             archivo.close()
             
-    def agregar_al_Archivo(self,auxArchivo):#falta añadir el contenido
+    def agregar_al_archivo(self,auxArchivo):#falta añadir el contenido
         with open(auxArchivo,"a") as archivo:
             datoContenido=archivo.write()
             print(datoContenido)
