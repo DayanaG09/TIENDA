@@ -21,6 +21,9 @@ class Controlador:
         return validar_consulta
         
     def modificar_producto(self,lista_productos):
+        if len(lista_productos) < 7:  # Debes tener el ID en la lista
+            print("Error: no se pasó el ID del producto.")
+            return False
         lista_productos_datos=lista_productos
         self.objModeloProducto.set_producto(lista_productos_datos)    
         validar_consulta=self.objModeloProducto.modificar_producto()

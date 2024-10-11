@@ -31,6 +31,7 @@ class Interfaz:
         self.images=None
         self.contactoDrogueria=None
         self.letra=None
+        self.cargo=None
 
     def ventana_ingreso(self):
         self.ventanaLogin=tk.Tk()
@@ -90,7 +91,7 @@ class Interfaz:
         try:
             nombre=self.nombreUsuario.get()
             documento=self.documentoUsuario.get()
-            cargo=self.cargoUsuario.get()
+            self.cargo=self.cargoUsuario.get()
 
             if not all(char.isalpha() or char.isspace() for char in nombre):
                 raise ValueError("El nombre solo debe contener letras y espacios")
@@ -101,25 +102,28 @@ class Interfaz:
             if not nombre or not documento:
                 raise ValueError("Los campos deben ser llenados correctamente")
             
-            if not cargo:
-                raise ValueError("Por favor, seleccione un rol")
+            if self.cargo==None:
+                raise ValueError("Por favor, seleccione un rol")  
             
             x=1
-            listaUsuario=[documento,nombre,x,cargo]
+            listaUsuario=[documento,nombre,x,self.cargo]
             
-            if self.objControlador.validar_inicio_sesion(listaUsuario):
-                self.ventanaLogin.withdraw()
-                if cargo == "Administrador":
-                    self.ventana_home_admin()
-                elif cargo == "Vendedor":
-                    self.ventana_home_vendedor()
-            else:
-                messagebox.showerror("Error", "Usuario,contraseña o cargo incorrecto")
+            try:
+                    validacion_usuario=self.objControlador.validar_inicio_sesion(listaUsuario)
+                    if validacion_usuario is True:
+                        self.ventanaLogin.withdraw()
+                        self.ventana_home()
+                    else:
+                        raise ValueError("Usuario,contraseña o rol incorrecto")
+                    
+            except ValueError as e:
+                messagebox.showerror("Error",str(e))
+
         except ValueError as e:
             messagebox.showerror("Error",str(e))
             
             
-    def ventana_home_admin(self):
+    def ventana_home(self):
         
         ventanaTienda=tk.Toplevel()
         ventanaTienda.geometry("850x750")
@@ -147,42 +151,11 @@ class Interfaz:
             canvas.yview_scroll(-1 * int((event.delta / 120)), "units")
 
         canvas.bind_all("<MouseWheel>", _on_mouse_wheel)
+        
         self.frameContenido=tk.Frame(framePrincipal)
         self.crear_encabezado(framePrincipal)
-        self.crear_contenido(self.frameContenido) 
+        self.crear_contenido_lateral(self.frameContenido) 
         self.crear_pie_pagina(framePrincipal)
-        
-    def ventana_home_vendedor(self):
-        ventanaTienda=tk.Toplevel()
-        ventanaTienda.geometry("850x750")
-        ventanaTienda.maxsize(850,750)
-        ventanaTienda.title("DROGUERIA HAYBET SALUD")
-        
-        frameForCanvas=tk.Frame(ventanaTienda)
-        frameForCanvas.pack(fill="both",expand=True)
-        
-        canvas=tk.Canvas(frameForCanvas)
-        canvas.pack(side="left",fill="both",expand=True)
-        
-        scrollbar=tk.Scrollbar(frameForCanvas, orient="vertical", command=canvas.yview)
-        scrollbar.pack(side="right", fill="y")
-        
-        canvas.configure(yscrollcommand=scrollbar.set)
-        canvas.bind('<Configure>', lambda e: canvas.configure(scrollregion=canvas.bbox("all")))     
-        
-        framePrincipal=tk.Frame(canvas, bg="#719ae2")
-        framePrincipal.config(pady=10,padx=10)
-        
-        canvas.create_window((0,0), window=framePrincipal, anchor="nw")
-
-        def _on_mouse_wheel(event):
-            canvas.yview_scroll(-1 * int((event.delta / 120)), "units")
-
-        canvas.bind_all("<MouseWheel>", _on_mouse_wheel)
-        self.frameContenido=tk.Frame(framePrincipal)
-        self.crear_encabezado_vendedor(framePrincipal)    
-        self.crear_contenido()
-        self.crear_pie_pagina()
         
     def crear_encabezado(self,framePrincipal):
         self.letra=("Georgia",7, "bold")
@@ -191,14 +164,19 @@ class Interfaz:
         frameEncabezado.pack(padx=10,pady=10, expand=True, fill="both")
         frameSecciones=tk.Frame(frameEncabezado, bg="white")
         frameSecciones.place(relx=0.16,rely=0.05,relheight=0.9,relwidth=0.28,anchor="n")
-        home=tk.Button(frameSecciones,bg="#d6022a",  text="Home",font=self.letra , fg="white", command= lambda: self.ventana_home_admin(self.frameContenido))
-        home.place(relx=0.125,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
-        products=tk.Button(frameSecciones,  bg="#d6022a",text="Productos", font=self.letra , fg="white", command= lambda: self.mostrar_productos(self.frameContenido))
-        products.place(relx=0.37,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
-        about=tk.Button(frameSecciones, bg="#d6022a", text="Informes", font=self.letra , fg="white", command=lambda: self.mostrar_informes(self.frameContenido))
-        about.place(relx=0.62,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
-        contact=tk.Button(frameSecciones, bg="#d6022a", text="Contacto", font=self.letra , fg="white", command=lambda: self.mostrar_contacto(self.frameContenido))
-        contact.place(relx=0.87,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
+        boton_home=tk.Button(frameSecciones,bg="#d6022a",  text="Home",font=self.letra , fg="white", command= lambda: self.mostrar_home(self.frameContenido))
+        boton_home.place(relx=0.125,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
+        boton_products=tk.Button(frameSecciones,  bg="#d6022a",text="Productos", font=self.letra , fg="white", command= lambda: self.mostrar_productos(self.frameContenido))
+        boton_products.place(relx=0.37,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
+        if self.cargo=="Administrador":
+            boton_informe=tk.Button(frameSecciones, bg="#d6022a", text="Informes", font=self.letra , fg="white", command=lambda: self.mostrar_informes(self.frameContenido))
+            boton_informe.place(relx=0.62,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
+        
+        boton_contact=tk.Button(frameSecciones, bg="#d6022a", text="Contacto", font=self.letra , fg="white", command=lambda: self.mostrar_contacto(self.frameContenido))
+        if self.cargo=="Administrador":
+            boton_contact.place(relx=0.87,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
+        else:
+            boton_contact.place(relx=0.62,rely=0.81, relheight=0.2, relwidth=0.25, anchor="n")
         frameTituloEmpresa=tk.Frame(frameEncabezado)
         frameTituloEmpresa.place(relx=0.52,rely=0.05,relheight=0.9,relwidth=0.4,anchor="n")
         nombre=tk.Label(frameTituloEmpresa,bg="white", text="DROGUERÍA HAYBET" , font=("Georgia",20 , "bold") , fg="#d6022a")
@@ -209,30 +187,7 @@ class Interfaz:
         LabelImagenEncabezado.config(bg="white")
         LabelImagenEncabezado.place(relx=0.86,rely=0.05,relheight=0.9,relwidth=0.24,anchor="n")
     
-    def crear_encabezado_vendedor(self,framePrincipal):
-        self.letra=("Georgia",7, "bold")
-        frameEncabezado=tk.Frame(framePrincipal)
-        frameEncabezado.config(height=200, bg="white")
-        frameEncabezado.pack(padx=10,pady=10, expand=True, fill="both")
-        frameSecciones=tk.Frame(frameEncabezado, bg="white")
-        frameSecciones.place(relx=0.16,rely=0.05,relheight=0.9,relwidth=0.28,anchor="n")
-        home=tk.Button(frameSecciones,bg="#d6022a",  text="Home",font=self.letra , fg="white", command=lambda: self.ventana_home_vendedor(self.frameContenido))
-        home.place(relx=0.125,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
-        products=tk.Button(frameSecciones,  bg="#d6022a",text="Productos", font=self.letra , fg="white", command= lambda: self.mostrarProductos(self.frameContenido))
-        products.place(relx=0.37,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
-        contact=tk.Button(frameSecciones, bg="#d6022a", text="Contacto", font=self.letra , fg="white", command=lambda: self.mostrarContacto(self.frameContenido))
-        contact.place(relx=0.87,rely=0.81,relheight=0.2,relwidth=0.25,anchor="n")
-        frameTituloEmpresa=tk.Frame(frameEncabezado)
-        frameTituloEmpresa.place(relx=0.52,rely=0.05,relheight=0.9,relwidth=0.4,anchor="n")
-        nombre=tk.Label(frameTituloEmpresa,bg="white", text="DROGUERÍA HAYBET" , font=("Georgia",20 , "bold") , fg="#d6022a")
-        nombre.config(width=30,height=10)
-        nombre.pack(expand=True)
-        self.logo=self.interface_pictures("index/VISTA/imagenes/logo_drogueriaHaybet.png",160,150)
-        LabelImagenEncabezado=tk.Label(frameEncabezado,image=self.logo)
-        LabelImagenEncabezado.config(bg="white")
-        LabelImagenEncabezado.place(relx=0.86,rely=0.05,relheight=0.9,relwidth=0.24,anchor="n")
-    
-    def crear_contenido(self,frameContenido):
+    def crear_contenido_lateral(self,frameContenido):
         frameContenido.config(width=800,height=550, bg="#719ae2")
         frameContenido.pack(pady=10,padx=10,expand=True, fill="both")
         frameLateral=tk.Frame(frameContenido, bg="#8bb3e9")
@@ -385,19 +340,21 @@ class Interfaz:
         lp9=tk.Label(fProduct9,text="Cuidado del bebé\nLeche klim\n $80.000",bg="#ddffab")
         lp9.pack(expand=True,fill="both")
         lp9.config(bg="#aecef8", font=self.letra, fg="black")
+
+        if self.cargo=="Administrador":
+            botonAdd=tk.Button(frmContenidoProductos,text="Agregar Producto", command=lambda:self.crear_producto( )) 
+            botonAdd.place(relx=0.5,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
+            botonAdd.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
+            
+            botonActualizar=tk.Button(frmContenidoProductos,text="Actualizar producto", command=lambda: self.modificar_producto()) 
+            botonActualizar.place(relx=0.67,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
+            botonActualizar.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
+            
+            botonDelete=tk.Button(frmContenidoProductos,text="Eliminar Producto", command=lambda: self.eliminar_producto()) 
+            botonDelete.place(relx=0.84,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
+            botonDelete.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
         
-        botonAdd=tk.Button(frmContenidoProductos,text="Agregar Producto", command=lambda:self.crear_producto( )) 
-        botonAdd.place(relx=0.5,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
-        botonAdd.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
         
-        botonActualizar=tk.Button(frmContenidoProductos,text="Actualizar producto", command=lambda: self.modificar_producto()) 
-        botonActualizar.place(relx=0.67,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
-        botonActualizar.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
-        
-        botonDelete=tk.Button(frmContenidoProductos,text="Eliminar Producto", command=lambda: self.eliminar_producto()) 
-        botonDelete.place(relx=0.84,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
-        botonDelete.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
-    
     def crear_producto(self):
         self.letra = ("Georgia", 20, "bold")
         self.ventana_crear = tk.Tk()  # Corrección aquí
@@ -419,48 +376,79 @@ class Interfaz:
         frameAdd.place(relx=0.5,rely=0.25,relheight=0.7, relwidth=0.65, anchor="n")
         
         
-        label_id=tk.Label(frameAdd, bg= "#96c7e6",text="ID del producto")
-        label_id.config(font=self.letra)
-        label_id.pack(pady=0.3)
-        self.id=tk.StringVar()
-        entry_id=tk.Entry(frameAdd,textvariable=self.id)
-        entry_id.pack(pady=15)
+        label_nombre=tk.Label(frameAdd, bg= "#96c7e6",text="Nombre del producto")
+        label_nombre.config(font=self.letra)
+        label_nombre.pack(pady=0.3)
+        self.nombre=tk.StringVar()
+        entry_nombre=tk.Entry(frameAdd,textvariable=self.nombre)
+        entry_nombre.pack(pady=15)
         
-        labelNombre=tk.Label(frameAdd, bg= "#96c7e6",text="Nombre del producto")
-        labelNombre.config(font=self.letra)
-        labelNombre.pack(pady=0.3)
-        self.nombre_med=tk.StringVar()
-        entryNombre=tk.Entry(frameAdd,textvariable=self.nombre_med)
-        entryNombre.pack(pady=15)
+        labelCantidadE=tk.Label(frameAdd, bg= "#96c7e6",text="Cantidad Existencia")
+        labelCantidadE.config(font=self.letra)
+        labelCantidadE.pack(pady=0.3)
+        self.cantidadE=tk.StringVar()
+        entrycantidadE=tk.Entry(frameAdd,textvariable=self.cantidadE)
+        entrycantidadE.pack(pady=15)
         
-        label_cantidad=tk.Label(frameAdd , bg= "#96c7e6",text="Cantidad")
-        label_cantidad.config(font=self.letra)
-        label_cantidad.pack(pady=15)
-        self.cantidad=tk.StringVar()
-        entry_cantidad=tk.Entry(frameAdd,textvariable=self.cantidad)
-        entry_cantidad.pack(pady=15)
+        label_cantidadV=tk.Label(frameAdd , bg= "#96c7e6",text="Cantidad Vendida")
+        label_cantidadV.config(font=self.letra)
+        label_cantidadV.pack(pady=15)
+        self.cantidadV=tk.StringVar()
+        entry_cantidadV=tk.Entry(frameAdd,textvariable=self.cantidadV)
+        entry_cantidadV.pack(pady=15)
         
         label_categoria=tk.Label(frameAdd , bg= "#96c7e6",text="Categoria")
         label_categoria.config(font=self.letra)
         label_categoria.pack(pady=15)
         self.categoria=tk.StringVar()
-        entry_cat=tk.Entry(frameAdd,textvariable=self.categoria)
-        entry_cat.pack(pady=15)
+        entry_categoria=tk.Entry(frameAdd,textvariable=self.categoria)
+        entry_categoria.pack(pady=15)
         
-        label_descripcion=tk.Label(frameAdd , bg= "#96c7e6",text="Descripcion")
-        label_descripcion.config(font=self.letra)
-        label_descripcion.pack(pady=15)
-        self.descripcion=tk.StringVar()
-        entry_des=tk.Entry(frameAdd,textvariable=self.descripcion)
-        entry_des.pack(pady=15)
-        # Asegúrate de empaquetar el Treeview
+        label_detalles=tk.Label(frameAdd , bg= "#96c7e6",text="Detalles")
+        label_detalles.config(font=self.letra)
+        label_detalles.pack(pady=15)
+        self.detalles=tk.StringVar()
+        entry_detalles=tk.Entry(frameAdd,textvariable=self.detalles)
+        entry_detalles.pack(pady=15)
+        
+        label_precio=tk.Label(frameAdd , bg= "#96c7e6",text="Precio")
+        label_precio.config(font=self.letra)
+        label_precio.pack(pady=15)
+        self.precio=tk.StringVar()
+        entry_precio=tk.Entry(frameAdd,textvariable=self.precio)
+        entry_precio.pack(pady=15)
 
-        # Botón para registrar el producto
         boton_crear = tk.Button(self.ventana_crear, text="REGISTRAR PRODUCTO",
-                                command=lambda: self.crear_producto("codigo, nombre, precio"),  # Pasar parámetros correctamente
+                                command=lambda: self.confirmar_crear(),
                                 bg="#d6022a")
         boton_crear.config(font=self.letra, fg="white")
         boton_crear.pack(pady=15)
+        
+    def confirmar_crear(self):
+        nombre=self.nombre.get()
+        cantidad_existencia=self.cantidadE.get()
+        cantidad_vendida=self.cantidadV.get()
+        categoria=self.categoria.get()
+        detalles=self.detalles.get()
+        precio=self.precio.get()
+        
+        if not all([nombre, cantidad_existencia,cantidad_vendida, categoria, detalles,precio]):
+            messagebox.showwarning("Entrada inválida", "Por favor, complete todos los campos.")
+            return
+
+        try:
+            precio = float(precio)
+            cantidad_vendida = int(cantidad_vendida)
+        except ValueError:
+            messagebox.showwarning("Entrada inválida", "El precio debe ser un número y los vendidos un entero.")
+            return
+        
+        try:
+            listaProductos=[nombre,cantidad_existencia,cantidad_vendida,categoria,detalles,precio]
+            self.objControlador.crear_producto(self,listaProductos)
+            messagebox.showinfo("Éxito","Producto registrado correctamente")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al registrar el producto {e}")
     
     def eliminar_producto(self):
         self.letra = ("Georgia", 12, "bold")
@@ -495,11 +483,14 @@ class Interfaz:
         self.ventana_modificar.title("MODIFICAR PRODUCTOS")
         self.ventana_modificar.geometry('800x600')
 
-        self.crear_titulo()
+        self.crear_titulo_modificar()
         self.crear_treeview()
-        self.crear_formulario()
+        self.crear_formulario_modificar()
 
-    def crear_titulo(self):
+    def actualizar_treeview(self):
+        None
+    
+    def crear_titulo_modificar(self):
         frameTitulo = tk.Frame(self.ventana_modificar)
         frameTitulo.place(relx=0.5, rely=0, relheight=0.1, relwidth=1, anchor="n")
         labelTitulo = tk.Label(frameTitulo, bg="white", text="MODIFICAR PRODUCTO")
@@ -511,10 +502,10 @@ class Interfaz:
         frame_treeview.place(relx=0.05, rely=0.15, relheight=0.55, relwidth=0.9, anchor="nw")
 
         # Definir el Treeview
-        self.tabla_productos = ttk.Treeview(frame_treeview, columns=("id", "nombre_producto", "cantidad_existencia", "cantidad_vendidas", "id_categoria", "detalles", "precio_productos"), show='headings')
+        self.tabla_productos = ttk.Treeview(frame_treeview, columns=("id", "nombre_producto", "cantidad_existencia", "cantidad_vendidas", "categoria", "detalles", "precio_producto"), show='headings')
         
         # Establecer encabezados
-        headings = ["ID", "Nombre Producto", "Cantidad Existencia", "Cantidad Vendidas", "ID Categoría", "Detalles", "Precio"]
+        headings = ["ID", "Nombre Producto", "Cantidad Existencia", "Cantidad Vendidas", "Categoría", "Detalles", "Precio"]
         for i, heading in enumerate(headings):
             self.tabla_productos.heading(self.tabla_productos["columns"][i], text=heading)
 
@@ -522,14 +513,45 @@ class Interfaz:
         self.cargar_productos_en_treeview()
         self.tabla_productos.bind("<<TreeviewSelect>>", self.selecciona_producto)
 
-    def crear_formulario(self):
+    def cargar_productos_en_treeview(self):
+        productos = self.objControlador.consultar_productos()
+        if productos:
+            for producto in productos:
+                self.tabla_productos.insert("", "end", values=(
+                    producto.get_id_producto(),
+                    producto.get_nombre(),
+                    producto.get_existencia(),
+                    producto.get_cantidades_vendidas(),
+                    producto.get_categoria(),
+                    producto.get_detalles(),
+                    producto.get_precio()
+                ))
+        #for item in self.tabla_productos.get_children():
+            #self.tabla_productos.delete(item)
+    def selecciona_producto(self, event=None):
+        seleccionado = self.tabla_productos.selection()
+        if seleccionado:
+            item = self.tabla_productos.item(seleccionado[0])
+            values = item['values']
+            self.entry_nombre.delete(0, tk.END)
+            self.entry_nombre.insert(0, values[1])
+            self.entry_cantidadE.delete(0, tk.END)
+            self.entry_cantidadE.insert(0, values[2])
+            self.entry_cantidadV.delete(0, tk.END)
+            self.entry_cantidadV.insert(0, values[3])
+            self.aux_categoria.set(values[4])
+            self.entry_detalles.delete(0, tk.END)
+            self.entry_detalles.insert(0, values[5])
+            self.entry_precio.delete(0, tk.END)
+            self.entry_precio.insert(0, values[6])
+
+    def crear_formulario_modificar(self):
         frame_labels = tk.Frame(self.ventana_modificar, bg="#96c7e6")
         frame_labels.place(relx=0.05, rely=0.72, relheight=0.25, relwidth=0.9, anchor="nw")
 
         # Contenedor para la primera fila de los widgets
         first_row = tk.Frame(frame_labels, bg="#96c7e6")
         first_row.pack(pady=5)
-
         # NOMBRE
         labelNombre = tk.Label(first_row, text="Nombre")
         labelNombre.pack(side=tk.LEFT, padx=5)
@@ -558,9 +580,13 @@ class Interfaz:
         # CATEGORIAS
         labelCategoria = tk.Label(second_row, text="Categoría")
         labelCategoria.pack(side=tk.LEFT, padx=5)
+        lista_categorias=["Medicamentos","Bebés","Belleza","Bienestar","Hogar"]
         self.aux_categoria = tk.StringVar()
-        self.entry_cat = tk.Entry(second_row, textvariable=self.aux_categoria)
-        self.entry_cat.pack(side=tk.LEFT, padx=5)
+        #PENDIENTE POR APARECER TEXTO EN OPTION MENU
+        self.entry_categoria=tk.OptionMenu(second_row,self.aux_categoria,*lista_categorias)
+        self.entry_categoria.pack(side=tk.LEFT,padx=5)
+        
+
 
         # DETALLES
         label_detalles = tk.Label(second_row, text="Detalles")
@@ -580,155 +606,17 @@ class Interfaz:
         boton_modificar = tk.Button(frame_labels, text="Modificar Producto", command=self.confirmar_modificacion, bg="#d6022a", fg="white")
         boton_modificar.pack(pady=15)
 
-    def cargar_productos_en_treeview(self):
-        productos = self.objControlador.consultar_productos()
-        if productos:
-            for producto in productos:
-                self.tabla_productos.insert("", "end", values=(
-                    producto.get_id_producto(),
-                    producto.get_nombre(),
-                    producto.get_existencia(),
-                    producto.get_cantidades_vendidas(),
-                    producto.get_categoria(),
-                    producto.get_detalles(),
-                    producto.get_precio()
-                ))
-                print(producto)
-
-    def selecciona_producto(self, event=None):
-        seleccionado = self.tabla_productos.selection()
-        if seleccionado:
-            item = self.tabla_productos.item(seleccionado[0])
-            values = item['values']
-
-            # Asignar los valores a las variables StringVar
-            self.auxNombre.set(values[1])
-            self.aux_existenciaE.set(values[2])
-            self.aux_vendidas.set(values[3])
-            self.aux_categoria.set(values[4])
-            self.aux_detalles.set(values[5])
-            self.aux_precio.set(values[6])
-
     def confirmar_modificacion(self):
-        datos_modificados = [self.auxNombre.get(), self.aux_existenciaE.get(), self.aux_vendidas.get(), self.aux_categoria.get(), self.aux_detalles.get(), self.aux_precio.get()]
+        seleccion=self.tabla_productos.selection()
+        self.id_producto=seleccion[0]
+        datos_modificados = [self.id_producto,self.auxNombre.get(), self.aux_existenciaE.get(), self.aux_vendidas.get(), self.aux_categoria.get(), self.aux_detalles.get(), self.aux_precio.get()]
         resultado = self.objControlador.modificar_producto(datos_modificados)
 
-        if resultado:
+        if resultado is True:
             tk.messagebox.showinfo("Éxito", "El producto fue modificado exitosamente.")
             self.cargar_productos_en_treeview()
         else:
             tk.messagebox.showerror("Error", "Hubo un problema al modificar el producto.")
-
-
-    
-    def mostrar_productos_vendedor(self,frameContenido):
-        self.letra=("Georgia",10, "bold")
-        frameProductos=tk.Frame(frameContenido)
-        frameProductos.place(relx=0.605,rely=0.13,relheight=0.85, relwidth=0.77,anchor="n")
-        frameProductos.config(bg="#719ae2")
-        frmTituloCatalogo=tk.Frame(frameProductos)
-        frmTituloCatalogo.pack(padx=5,pady=5)
-        labelTituloCatalogo=tk.Label(frmTituloCatalogo,text="PRODUCTOS", bg="#719ae2")
-        labelTituloCatalogo.pack(expand=True,fill="both")
-        labelTituloCatalogo.config(font=self.letra, fg="white")
-        frmContenidoProductos=tk.Frame(frameProductos)
-        frmContenidoProductos.pack(expand=True,fill="both")
-        frmContenidoProductos.config(bg="#719ae2")
-        
-        self.image=self.interface_pictures("index/VISTA/imagenes/dolex.jpg",100,50)
-        fProduct1=tk.Frame(frmContenidoProductos,height=40,width=40)
-        fProduct1.place(relx=0.2,rely=0.05,relheight=0.25, relwidth=0.25,anchor="n")
-        fProduct1.config(bg="#719ae2")
-        LImagen1=tk.Label(fProduct1,image=self.image) 
-        LImagen1.pack(expand=True,fill="both")
-        LImagen1.config(bg="#719ae2")
-        lp1=tk.Label(fProduct1,text="Medicamentos\nDolex\n $15.000",bg="white")
-        lp1.config(bg="#aecef8", font=self.letra, fg="black")
-        lp1.pack(expand=True,fill="both")
-        self.image0=self.interface_pictures("index/VISTA/imagenes/bebe.jpg",100,50)
-        fProduct2=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct2.place(relx=0.5,rely=0.05,relheight=0.25, relwidth=0.25,anchor="n")
-        fProduct2.config(bg="#719ae2")
-        LImagen2=tk.Label(fProduct2,image=self.image0)
-        LImagen2.pack(expand=True,fill="both")
-        LImagen2.config(bg="#719ae2")
-        lp2=tk.Label(fProduct2,text="   Cuidado del bebé\nPañales Huggies\n $50.000",bg="#ddffab")
-        lp2.pack(expand=True,fill="both")
-        lp2.config(bg="#aecef8", font=self.letra, fg="black")
-        self.image2=self.interface_pictures("index/VISTA/imagenes/belleza.jpg",100,50)
-        fProduct3=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct3.place(relx=0.8,rely=0.05,relheight=0.25, relwidth=0.25,anchor="n")
-        fProduct3.config(bg="#719ae2")
-        LImagen3=tk.Label(fProduct3,image=self.image2)
-        LImagen3.pack(expand=True,fill="both")
-        LImagen3.config(bg="#719ae2")
-        lp3=tk.Label(fProduct3,text="Belleza\nEsmalte+polvo\n precio $30.000",bg="#ddffab")
-        lp3.pack(expand=True,fill="both")
-        lp3.config(bg="#aecef8", font=self.letra, fg="black")
-        self.image1=self.interface_pictures("index/VISTA/imagenes/mieltertos.jpg",100,50)
-        fProduct4=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct4.place(relx=0.2,rely=0.35,relheight=0.25, relwidth=0.25,anchor="n")
-        fProduct4.config(bg="#719ae2")
-        LImagen4=tk.Label(fProduct4,image=self.image1)
-        LImagen4.pack(expand=True,fill="both")
-        LImagen4.config(bg="#719ae2")
-        lp4=tk.Label(fProduct4,text="Medicamentos\nMieltertos 1\\n $1.500",bg="#ddffab")
-        lp4.pack(expand=True,fill="both")
-        lp4.config(bg="#aecef8", font=self.letra, fg="black")
-        self.image3=self.interface_pictures("index/VISTA/imagenes/benet.png",100,50)
-        fProduct5=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct5.place(relx=0.5,rely=0.35,relheight=0.25, relwidth=0.25,anchor="n")
-        fProduct5.config(bg="#719ae2")
-        LImagen5=tk.Label(fProduct5,image=self.image3)
-        LImagen5.pack(expand=True,fill="both")
-        LImagen5.config(bg="#719ae2")
-        lp5=tk.Label(fProduct5,text="Bienestar\nBenet\n $80.000",bg="#ddffab")
-        lp5.pack(expand=True,fill="both")
-        lp5.config(bg="#aecef8", font=self.letra, fg="black")
-        self.image4=self.interface_pictures("index/VISTA/imagenes/bebe2.png",100,50)
-        fProduct6=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct6.place(relx=0.8,rely=0.35,relheight=0.25, relwidth=0.25,anchor="n")
-        fProduct6.config(bg="#719ae2")
-        LImagen6=tk.Label(fProduct6,image=self.image4)
-        LImagen6.pack(expand=True,fill="both")
-        LImagen6.config(bg="#719ae2")
-        lp6=tk.Label(fProduct6,text="Cuidado del bebé\nCrema N°4\n $10.000",bg="#ddffab")
-        lp6.pack(expand=True,fill="both")
-        lp6.config(bg="#aecef8", font=self.letra, fg="black")
-        self.image5=self.interface_pictures("index/VISTA/imagenes/hogar.png",100,50)
-        fProduct7=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct7.place(relx=0.2,rely=0.65,relheight=0.25, relwidth=0.25,anchor="n")
-        fProduct7.config(bg="#719ae2")
-        LImagen7=tk.Label(fProduct7,image=self.image5)
-        LImagen7.pack(expand=True,fill="both")
-        LImagen7.config(bg="#719ae2")
-        lp7=tk.Label(fProduct7,text="Hogar\nPapel Familia x12\n $15.000",bg="#ddffab")
-        lp7.pack(expand=True,fill="both")
-        lp7.config(bg="#aecef8", font=self.letra, fg="black")
-        self.image6=self.interface_pictures("index/VISTA/imagenes/mieltertos2.jpg",100,50)
-        fProduct8=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct8.place(relx=0.5,rely=0.65,relheight=0.25, relwidth=0.25,anchor="n")
-        fProduct8.config(bg="#719ae2")
-        LImagen8=tk.Label(fProduct8,image=self.image6)
-        LImagen8.pack(expand=True,fill="both")
-        LImagen8.config(bg="#719ae2")
-        lp8=tk.Label(fProduct8,text="Medicametos \nMieltertos ped\n $15.000",bg="#ddffab")
-        lp8.pack(expand=True,fill="both")
-        lp8.config(bg="#aecef8", font=self.letra, fg="black")
-        self.image7=self.interface_pictures("index/VISTA/imagenes/bebe1.jpg",100,50)
-        fProduct9=tk.Frame(frmContenidoProductos, bg="#59baa9",height=20,width=20, )
-        fProduct9.place(relx=0.8,rely=0.65,relheight=0.25, relwidth=0.25,anchor="n")
-        fProduct9.config(bg="#719ae2")
-        LImagen9=tk.Label(fProduct9,image=self.image7)
-        LImagen9.pack(expand=True,fill="both")
-        LImagen9.config(bg="#719ae2")
-        lp9=tk.Label(fProduct9,text="Cuidado del bebé\nLeche klim\n $80.000",bg="#ddffab")
-        lp9.pack(expand=True,fill="both")
-        lp9.config(bg="#aecef8", font=self.letra, fg="black")
-        
-        botonAdd=tk.Button(frmContenidoProductos,text="vender", command=None) #al pulsar debe generar un informe de tipo texto con ayuda del JSON
-        botonAdd.place(relx=0.83,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
-        botonAdd.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
             
     def mostrar_informes(self,frameContenido):
         self.letra=("Georgia",10, "bold")
