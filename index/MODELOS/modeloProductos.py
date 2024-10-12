@@ -57,6 +57,14 @@ class Producto:
         self.set_categoria(listaProductos[4])
         self.set_detalles(listaProductos[5])
         self.set_precio(listaProductos[6])
+        
+    def set_producto2(self,listaProductos):
+        self.set_nombre(listaProductos[0])
+        self.set_existencia(listaProductos[1])
+        self.set_cantidades_vendidas(listaProductos[2])
+        self.set_categoria(listaProductos[3])
+        self.set_detalles(listaProductos[4])
+        self.set_precio(listaProductos[5])
             
   ###REGISTRAR PRODUCTOS   
     def crear_producto (self):
@@ -85,6 +93,7 @@ class Producto:
                     categoria=%s, detalles=%s, precio_producto=%s 
                 WHERE Id_producto=%s
                 """, (self.nombre,self.existencia,self.cantidadesVendidas,self.categoria,self.detalles,self.precio,self.idProducto))
+            print(self.idProducto,self.nombre,self.existencia,self.cantidadesVendidas,self.categoria,self.detalles,self.precio)
             self.conexion.commit()
             print("Producto modificado con éxito")
             return True

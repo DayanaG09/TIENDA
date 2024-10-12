@@ -16,7 +16,7 @@ class Controlador:
 
     def crear_producto(self, lista_productos):
         lista_productos_datos=lista_productos
-        self.objModeloProducto.set_producto(lista_productos_datos)    
+        self.objModeloProducto.set_producto2(lista_productos_datos)    
         validar_consulta=self.objModeloProducto.crear_producto()
         return validar_consulta
         
@@ -29,9 +29,9 @@ class Controlador:
         validar_consulta=self.objModeloProducto.modificar_producto()
         return validar_consulta
         
-    def eliminar_producto(self,lista_productos):
-        lista_productos_datos=lista_productos
-        self.objModeloProducto.set_producto(lista_productos_datos)    
+    def eliminar_producto(self,id):
+        id_producto=id
+        self.objModeloProducto.set_id_producto(id_producto)    
         validar_consulta=self.objModeloProducto.eliminar_producto()
         return validar_consulta
     

@@ -380,57 +380,57 @@ class Interfaz:
         label_nombre.config(font=self.letra)
         label_nombre.pack(pady=0.3)
         self.nombre=tk.StringVar()
-        entry_nombre=tk.Entry(frameAdd,textvariable=self.nombre)
-        entry_nombre.pack(pady=15)
+        self.entry_nombre_crear=tk.Entry(frameAdd,textvariable=self.nombre)
+        self.entry_nombre_crear.pack(pady=5)
         
         labelCantidadE=tk.Label(frameAdd, bg= "#96c7e6",text="Cantidad Existencia")
         labelCantidadE.config(font=self.letra)
         labelCantidadE.pack(pady=0.3)
         self.cantidadE=tk.StringVar()
-        entrycantidadE=tk.Entry(frameAdd,textvariable=self.cantidadE)
-        entrycantidadE.pack(pady=15)
+        self.entrycantidadE_crear=tk.Entry(frameAdd,textvariable=self.cantidadE)
+        self.entrycantidadE_crear.pack(pady=5)
         
         label_cantidadV=tk.Label(frameAdd , bg= "#96c7e6",text="Cantidad Vendida")
         label_cantidadV.config(font=self.letra)
-        label_cantidadV.pack(pady=15)
+        label_cantidadV.pack(pady=5)
         self.cantidadV=tk.StringVar()
-        entry_cantidadV=tk.Entry(frameAdd,textvariable=self.cantidadV)
-        entry_cantidadV.pack(pady=15)
+        self.entry_cantidadV_crear=tk.Entry(frameAdd,textvariable=self.cantidadV)
+        self.entry_cantidadV_crear.pack(pady=5)
         
         label_categoria=tk.Label(frameAdd , bg= "#96c7e6",text="Categoria")
         label_categoria.config(font=self.letra)
-        label_categoria.pack(pady=15)
+        label_categoria.pack(pady=5)
         self.categoria=tk.StringVar()
-        entry_categoria=tk.Entry(frameAdd,textvariable=self.categoria)
-        entry_categoria.pack(pady=15)
+        self.entry_categoria_crear=tk.Entry(frameAdd,textvariable=self.categoria)
+        self.entry_categoria_crear.pack(pady=5)
         
         label_detalles=tk.Label(frameAdd , bg= "#96c7e6",text="Detalles")
         label_detalles.config(font=self.letra)
-        label_detalles.pack(pady=15)
+        label_detalles.pack(pady=5)
         self.detalles=tk.StringVar()
-        entry_detalles=tk.Entry(frameAdd,textvariable=self.detalles)
-        entry_detalles.pack(pady=15)
+        self.entry_detalles_crear=tk.Entry(frameAdd,textvariable=self.detalles)
+        self.entry_detalles_crear.pack(pady=5)
         
         label_precio=tk.Label(frameAdd , bg= "#96c7e6",text="Precio")
         label_precio.config(font=self.letra)
-        label_precio.pack(pady=15)
+        label_precio.pack(pady=5)
         self.precio=tk.StringVar()
-        entry_precio=tk.Entry(frameAdd,textvariable=self.precio)
-        entry_precio.pack(pady=15)
+        self.entry_precio_crear=tk.Entry(frameAdd,textvariable=self.precio)
+        self.entry_precio_crear.pack(pady=5)
 
         boton_crear = tk.Button(self.ventana_crear, text="REGISTRAR PRODUCTO",
                                 command=lambda: self.confirmar_crear(),
                                 bg="#d6022a")
         boton_crear.config(font=self.letra, fg="white")
-        boton_crear.pack(pady=15)
+        boton_crear.pack(pady=5)
         
     def confirmar_crear(self):
-        nombre=self.nombre.get()
-        cantidad_existencia=self.cantidadE.get()
-        cantidad_vendida=self.cantidadV.get()
-        categoria=self.categoria.get()
-        detalles=self.detalles.get()
-        precio=self.precio.get()
+        nombre=self.entry_nombre_crear.get()
+        cantidad_existencia=self.entrycantidadE_crear.get()
+        cantidad_vendida=self.entry_cantidadV_crear.get()
+        categoria=self.entry_categoria_crear.get()
+        detalles=self.entry_detalles_crear.get()
+        precio=self.entry_precio_crear.get()
         
         if not all([nombre, cantidad_existencia,cantidad_vendida, categoria, detalles,precio]):
             messagebox.showwarning("Entrada inválida", "Por favor, complete todos los campos.")
@@ -445,7 +445,7 @@ class Interfaz:
         
         try:
             listaProductos=[nombre,cantidad_existencia,cantidad_vendida,categoria,detalles,precio]
-            self.objControlador.crear_producto(self,listaProductos)
+            self.objControlador.crear_producto(listaProductos)
             messagebox.showinfo("Éxito","Producto registrado correctamente")
         except Exception as e:
             messagebox.showerror("Error", f"Error al registrar el producto {e}")
@@ -460,22 +460,44 @@ class Interfaz:
         frame_eliminar.config(bg="#96c7e6",width=400,height=600)
         frame_eliminar.pack(expand=True,fill="both")
         
-        eliminar = ttk.Treeview(frame_eliminar, columns=("codigo", "producto", "precio"), show='headings')
-        eliminar.heading("codigo", text="CODIGO")
-        eliminar.heading("producto", text="Nombre Producto")
-        eliminar.heading("precio", text="Precio Producto")
-        eliminar.column("codigo", width=100)
-        eliminar.column("producto", width=100)
-        eliminar.column("precio", width=100)
-        eliminar.pack() # Asegúrate de empaquetar el Treeview
+        self.tabla_eliminar = ttk.Treeview(frame_eliminar, columns=("codigo", "nombre", "precio"), show='headings')
+        self.tabla_eliminar.heading("codigo", text="CODIGO")
+        self.tabla_eliminar.heading("nombre", text="Nombre Producto")
+        self.tabla_eliminar.heading("precio", text="Precio Producto")
+        self.tabla_eliminar.column("codigo", width=100)
+        self.tabla_eliminar.column("nombre", width=100)
+        self.tabla_eliminar.column("precio", width=100)
+        self.tabla_eliminar.pack()
+        self.cargar_productos_treeview_eliminar()
         
 
         # Botón para eliminar el producto
         boton_eliminar = tk.Button(self.ventana_eliminar, text="Eliminar Producto",
-                                   command=lambda: self.eliminar_producto("codigo, nombre, precio"),  # Corrección aquí
+                                   command=lambda: self.confirmar_eliminar(),
                                    bg="#d6022a")
         boton_eliminar.config(font=self.letra, fg="white")
         boton_eliminar.pack(pady=15)
+        
+    def confirmar_eliminar(self):
+        id_seleccionado = self.tabla_eliminar.selection()
+        if not id_seleccionado:
+            messagebox.showerror("Error", "No se ha seleccionado ningún registro")
+        else:
+            item= self.tabla_eliminar.item(id_seleccionado[0])
+            id=item["values"][0]
+            
+            print(id)
+            try:
+                if int(id) > 0:
+                    self.tabla_eliminar.delete(id_seleccionado[0])
+                    self.objControlador.eliminar_producto(id)
+                    self.vaciar_tabla_eliminar()
+                    self.cargar_productos_treeview_eliminar()
+                    messagebox.showinfo("Acción Realizada Exitosamente", "Producto eliminado con éxito")
+                else:
+                    messagebox.showerror("Error", "No se puede eliminar el producto con ID 0")
+            except ValueError:
+                messagebox.showerror("Error", "El ID seleccionado no es válido")
 
     def modificar_producto(self):
         self.letra = ("Georgia", 12, "bold")
@@ -528,6 +550,17 @@ class Interfaz:
                 ))
         #for item in self.tabla_productos.get_children():
             #self.tabla_productos.delete(item)
+    
+    def cargar_productos_treeview_eliminar(self):
+        productos = self.objControlador.consultar_productos()
+        if productos:
+            for producto in productos:
+                self.tabla_eliminar.insert("", "end", values=(
+                    producto.get_id_producto(),
+                    producto.get_nombre(),
+                    producto.get_precio()
+                ))
+        
     def selecciona_producto(self, event=None):
         seleccionado = self.tabla_productos.selection()
         if seleccionado:
@@ -544,6 +577,17 @@ class Interfaz:
             self.entry_detalles.insert(0, values[5])
             self.entry_precio.delete(0, tk.END)
             self.entry_precio.insert(0, values[6])
+            
+    def vaciar_tabla(self):
+        filas = self.tabla_productos.get_children()
+        for fila in filas:
+            self.tabla_productos.delete(fila)
+            
+    def vaciar_tabla_eliminar(self):
+        filas = self.tabla_eliminar.get_children()
+        for fila in filas:
+            self.tabla_eliminar.delete(fila)
+            
 
     def crear_formulario_modificar(self):
         frame_labels = tk.Frame(self.ventana_modificar, bg="#96c7e6")
@@ -582,6 +626,7 @@ class Interfaz:
         labelCategoria.pack(side=tk.LEFT, padx=5)
         lista_categorias=["Medicamentos","Bebés","Belleza","Bienestar","Hogar"]
         self.aux_categoria = tk.StringVar()
+        self.aux_categoria.set(lista_categorias[0])
         #PENDIENTE POR APARECER TEXTO EN OPTION MENU
         self.entry_categoria=tk.OptionMenu(second_row,self.aux_categoria,*lista_categorias)
         self.entry_categoria.pack(side=tk.LEFT,padx=5)
@@ -608,15 +653,37 @@ class Interfaz:
 
     def confirmar_modificacion(self):
         seleccion=self.tabla_productos.selection()
-        self.id_producto=seleccion[0]
-        datos_modificados = [self.id_producto,self.auxNombre.get(), self.aux_existenciaE.get(), self.aux_vendidas.get(), self.aux_categoria.get(), self.aux_detalles.get(), self.aux_precio.get()]
-        resultado = self.objControlador.modificar_producto(datos_modificados)
+        item=self.tabla_productos.item(seleccion[0])
+        id_producto=item["values"][0]
+        nombre=self.entry_nombre.get()
+        cantidadesE=self.entry_cantidadE.get()
+        cantidadesV=self.entry_cantidadV.get()
+        categoria=self.aux_categoria.get()
+        detalles=self.entry_detalles.get()
+        precio=self.entry_precio.get()
+        
+        if not all([nombre, cantidadesE,cantidadesV, categoria, detalles,precio]):
+                    messagebox.showwarning("Entrada inválida", "Por favor, complete todos los campos.")
+                    return
 
-        if resultado is True:
-            tk.messagebox.showinfo("Éxito", "El producto fue modificado exitosamente.")
-            self.cargar_productos_en_treeview()
-        else:
-            tk.messagebox.showerror("Error", "Hubo un problema al modificar el producto.")
+        try:
+            precio = float(precio)
+            cantidadesV = int(cantidadesV)
+        except ValueError:
+            messagebox.showwarning("Entrada inválida", "El precio debe ser un número y los vendidos un entero.")
+            return
+        try:
+            datos_modificados = [id_producto,nombre,cantidadesE,cantidadesV,categoria,detalles, precio ]
+            resultado = self.objControlador.modificar_producto(datos_modificados)
+            if resultado is True:
+                tk.messagebox.showinfo("Éxito", "El producto fue modificado exitosamente.")
+                self.vaciar_tabla()
+                self.cargar_productos_en_treeview()
+            else:
+                tk.messagebox.showerror("Error", "Hubo un problema al modificar el producto.")
+        except ValueError as e:
+                messagebox.showerror("Error",f"El producto no se pudo modificar: {e}")
+            
             
     def mostrar_informes(self,frameContenido):
         self.letra=("Georgia",10, "bold")
