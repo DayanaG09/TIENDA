@@ -36,17 +36,17 @@ class Interfaz:
     def ventana_ingreso(self):
         self.ventanaLogin=tk.Tk()
         self.ventanaLogin.geometry("600x800")
-        self.ventanaLogin.maxsize(600,800)
+        self.ventanaLogin.maxsize(600,650)
         self.ventanaLogin.title("INICIO SESION HAYBET SALUD")
         self.letra=("Georgia", 20, "bold")
-        self.images = self.interface_pictures(r"index\VISTA\imagenes\pastillas.jpg", 250, 190)
+        self.images = self.interface_pictures(r"index\VISTA\imagenes\pastillas.jpg", 210, 150)
 
         frameInicioSesion=tk.Frame(self.ventanaLogin)
         frameInicioSesion.config(bg="#96c7e6",width=400,height=500)
         frameInicioSesion.pack(expand=True,fill="both")
         
-        frameTitulo=tk.Frame(frameInicioSesion)
-        frameTitulo.place(relx=0.7,rely=0,relheight=0.242, relwidth=0.69, anchor="n")
+        frameTitulo=tk.Frame(frameInicioSesion,bg="white")
+        frameTitulo.place(relx=0.7,rely=0,relheight=0.237, relwidth=0.69, anchor="n")
         labelTitulo=tk.Label(frameTitulo,bg= "white", text="INICIO DE SESION")
         labelTitulo.config(font=self.letra, fg="#d6022a")
         labelTitulo.pack(expand=True,fill="both")
@@ -55,8 +55,7 @@ class Interfaz:
         frameLogin.place(relx=0.5,rely=0.25,relheight=0.7, relwidth=0.65, anchor="n")
         
         LabelImagenLogin=tk.Label(frameInicioSesion,image=self.images)
-        LabelImagenLogin.place(relheight=0.1,relwidth=0.1,anchor="n")
-        LabelImagenLogin.grid(padx=0.5, pady=0.5)
+        LabelImagenLogin.grid()
         
         labelNombre=tk.Label(frameLogin, bg= "#96c7e6",text="Nombre")
         labelNombre.config(font=self.letra)
@@ -236,21 +235,23 @@ class Interfaz:
         botonC5=tk.Button(frameCategorias, text="Hogar",bg="white",  font=("Georgia",8, "bold"), fg="#719ae2")
         botonC5.place(relx=0.9,rely=0.2,relheight=0.6, relwidth=0.18,anchor="n")
         
-    def mostrar_home(self,frameContenido):
-        frameHome=tk.Frame(frameContenido)
-        frameHome.place(relx=0.605,rely=0.13,relheight=0.85, relwidth=0.77,anchor="n")
+    def mostrar_home(self, frameContenido):
+        frameHome = tk.Frame(frameContenido)
+        frameHome.place(relx=0.605, rely=0.13, relheight=0.85, relwidth=0.77, anchor="n")
         frameHome.config(bg="#719ae2")
-        self.homeDrogueria=self.interface_pictures("index/VISTA/imagenes/contacto_drogueria.png",550,450)
-        frameImagen=tk.Frame(frameHome,bg="#719ae2")
-        frameImagen.place(relx=0.5,rely=0.25,relheight=0.5,relwidth=0.9,anchor="n")
-        labelContacto=tk.Label(frameImagen,image=self.homeDrogueria)
-        labelContacto.pack(expand=True,fill="both")
-        frameBienvenida=tk.Frame(frameHome,bg="#719ae2")
-        frameBienvenida.place(relx=0.5,rely=0.75,relheight=0.5,relwidth=0.9,anchor="n")
-        labelBienvenida=tk.Label(frameBienvenida,bg="#719ae2",font=self.letra, text="BIENVENIDO CONTROL DE INVENTARIO\nDE DROGUERIA HAYBET SALUD")
-        labelBienvenida.pack()
-        labelmensaje=tk.Label(frameBienvenida,font=self.letra,bg="#719ae2",text="Aquí podrás llevar un control detallado de tu inventario y\nobtener informes de tus ventas")
-        labelmensaje.pack()
+        frameImagen = tk.Frame(frameHome, bg="#719ae2")
+        frameImagen.place(relx=0.5, rely=0.02, relheight=0.65, relwidth=0.96, anchor="n")
+        
+        self.homeDrogueria = self.interface_pictures("index/VISTA/imagenes/contacto_drogueria.png", 320, 280)
+        labelImagen = tk.Label(frameImagen,bg="#719ae2", image=self.homeDrogueria)
+        labelImagen.place(relx=0.5, rely=0.01, relheight=0.98, relwidth=0.98, anchor="n")
+        
+        frameBienvenida = tk.Frame(frameHome, bg="#719ae2")
+        frameBienvenida.place(relx=0.5, rely=0.65, relheight=0.32, relwidth=0.96, anchor="n")
+        labelBienvenida = tk.Label(frameBienvenida,bg="#719ae2", font=("Georgia",16, "bold"), text="BIENVENIDO AL CONTROL DE INVENTARIO\nDE LA DROGUERIA HAYBET SALUD")
+        labelBienvenida.pack(pady=20, padx=10)
+        labelMensaje = tk.Label(frameBienvenida,bg="#719ae2", font=("Georgia",12, "bold"), text="Aquí podrás llevar un control detallado de tu inventario y\nobtener informes de tus ventas")
+        labelMensaje.pack(pady=0, padx=10)
     
     def mostrar_productos(self,frameContenido):
         self.letra=("Georgia",10, "bold")
@@ -261,10 +262,13 @@ class Interfaz:
         frmTituloCatalogo.pack(padx=5,pady=5)
         labelTituloCatalogo=tk.Label(frmTituloCatalogo,text="PRODUCTOS", bg="#719ae2")
         labelTituloCatalogo.pack(expand=True,fill="both")
-        labelTituloCatalogo.config(font=self.letra, fg="white")
+        labelTituloCatalogo.config(font=self.letra, fg="black")
         frmContenidoProductos=tk.Frame(frameProductos)
         frmContenidoProductos.pack(expand=True,fill="both")
         frmContenidoProductos.config(bg="#719ae2")
+        
+        lista_productos=self.objControlador.consultar_detalles_producto()
+        producto1=lista_productos[0]
         
         self.image=self.interface_pictures("index/VISTA/imagenes/dolex.jpg",100,50)
         fProduct1=tk.Frame(frmContenidoProductos,height=40,width=40)
@@ -373,7 +377,7 @@ class Interfaz:
         
     def crear_producto(self):
         self.letra = ("Georgia", 20, "bold")
-        self.ventana_crear = tk.Tk()  # Corrección aquí
+        self.ventana_crear = tk.Toplevel()  # Corrección aquí
         self.ventana_crear.title("CREAR PRODUCTOS")
         self.ventana_crear.geometry('600x800')
         self.ventana_crear.maxsize(600,800)# Corrección aquí
@@ -462,13 +466,14 @@ class Interfaz:
         try:
             listaProductos=[nombre,cantidad_existencia,cantidad_vendida,categoria,detalles,precio]
             self.objControlador.crear_producto(listaProductos)
+            self.ventana_crear.withdraw()
             messagebox.showinfo("Éxito","Producto registrado correctamente")
         except Exception as e:
             messagebox.showerror("Error", f"Error al registrar el producto {e}")
     
     def eliminar_producto(self):
         self.letra = ("Georgia", 12, "bold")
-        self.ventana_eliminar = tk.Tk()  # Corrección aquí
+        self.ventana_eliminar = tk.Toplevel()  # Corrección aquí
         self.ventana_eliminar.title("ELIMINAR PRODUCTOS")
         self.ventana_eliminar.geometry('500x600')
 
@@ -515,7 +520,7 @@ class Interfaz:
 
     def modificar_producto(self):
         self.letra = ("Georgia", 12, "bold")
-        self.ventana_modificar = tk.Tk()
+        self.ventana_modificar = tk.Toplevel()
         self.ventana_modificar.title("MODIFICAR PRODUCTOS")
         self.ventana_modificar.geometry('800x600')
 

@@ -123,6 +123,18 @@ class Producto:
         finally:
             cursor.close()
             
+    def consultar_detalles_productos(self):
+        cursor = self.conexion.cursor()
+        try:
+            cursor.execute("SELECT producto.nombre__producto,producto.detalles, producto.precio_producto FROM producto ORDER BY producto.cantidad_vendidas DESC LIMIT 4")
+            consulta = cursor.fetchall()
+            return consulta
+        except Exception as e:
+            print(f"Error al consultar los productos más vendidos: {e}")
+            return None
+        finally:
+            cursor.close()
+            
     def consultar_productos_masVendidos(self): #este metodo debe consultar el producto indicado por el usuario
         cursor = self.conexion.cursor()
         try:

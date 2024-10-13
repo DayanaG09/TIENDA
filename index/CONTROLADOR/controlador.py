@@ -49,6 +49,10 @@ class Controlador:
         consulta_producto=self.objModeloProducto.consultar_productos()
         return consulta_producto
     
+    def consultar_detalles_producto(self):
+        listaDetalles=self.objModeloProducto.consultar_detalles_producto
+        return listaDetalles
+    
     def consulta_categoria(self,categoria):
         self.objModeloCategoria.set_id(categoria)
         self.objModeloCategoria.consulta_categoria()
