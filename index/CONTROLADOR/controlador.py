@@ -1,3 +1,5 @@
+import json
+from datetime import datetime
 class Controlador:
     def __init__(self,objModeloUsuario,objModeloProducto,objModeloCategoria):
         self.objModeloUsuario=objModeloUsuario
@@ -21,7 +23,7 @@ class Controlador:
         return validar_consulta
         
     def modificar_producto(self,lista_productos):
-        if len(lista_productos) < 7:  # Debes tener el ID en la lista
+        if len(lista_productos) < 7:
             print("Error: no se pasó el ID del producto.")
             return False
         lista_productos_datos=lista_productos
@@ -35,11 +37,13 @@ class Controlador:
         validar_consulta=self.objModeloProducto.eliminar_producto()
         return validar_consulta
     
-    def consultar_producto(self,producto):
-        self.objModeloProducto.set_id_producto(producto)
-        self.objModeloProducto.consultar_producto()
-        producto_nuevo=self.objModeloProducto.get_nombre()
-        return producto_nuevo
+    def consultar_productos_masVendidos(self):
+        listaMasVendidos=self.objModeloProducto.consultar_productos_masVendidos()
+        return listaMasVendidos
+    
+    def consultar_productos_menosVendidos(self):
+        listaMenosVendidos=self.objModeloProducto.consultar_productos_menosVendidos()
+        return listaMenosVendidos
         
     def consultar_productos(self):
         consulta_producto=self.objModeloProducto.consultar_productos()
@@ -55,13 +59,28 @@ class Controlador:
         consulta_categoria=self.objModeloCategoria.consultar_categorias()
         return consulta_categoria
     
-    def crear_archivo(self):
-        datoProducto=self.objModeloProducto.get_id_producto()
-        datoTitulo=self.objModeloProducto.get_nombreArchivo()
-        archivoCreado=self.objModeloProducto.crearArchivo(datoProducto,datoTitulo)
-        self.objModeloProducto.leerArchivo(archivoCreado)
+    
         
-    def deserializar(self,datoTitulo):
-            auxDatoCreado=self.objModeloProducto.deserializar(datoTitulo)
-            return auxDatoCreado
+    def crear_archivo(self):
+        fecha_actual = datetime.now()
+        fecha_formateada = fecha_actual.strftime('%Y-%m-%d %H:%M:%S')
+
+        listaMasVendidos = self.objModeloProducto.consultar_productos_masVendidos()
+        listaMenosVendidos = self.objModeloProducto.consultar_productos_menosVendidos()
+
+        informe = {
+            "fecha_informe": fecha_formateada,
+            "productos_mas_vendidos": [
+                {"nombre": listaMasVendidos[i][0], "cantidad": listaMasVendidos[i][1]} 
+                for i in range(min(4, len(listaMasVendidos)))
+            ],
+            "productos_menos_vendidos": [
+                {"nombre": listaMenosVendidos[i][0], "cantidad": listaMenosVendidos[i][1]} 
+                for i in range(min(4, len(listaMenosVendidos)))
+            ]
+        }
+
+        nombreArchivo = "Informe_de_ventas.txt"
+        with open(nombreArchivo, 'w', encoding='utf-8') as archivo:
+            json.dump(informe, archivo, ensure_ascii=False, indent=4)
     
