@@ -1,9 +1,9 @@
 {
-    "fecha_informe": "2024-10-12 23:03:35",
+    "fecha_informe": "2024-10-15 11:29:09",
     "productos_mas_vendidos": [
         {
             "nombre": "Mieltertos",
-            "cantidad": 100
+            "cantidad": 110
         },
         {
             "nombre": "Dolex",

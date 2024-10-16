@@ -263,10 +263,16 @@ class Interfaz:
         labelTituloCatalogo=tk.Label(frmTituloCatalogo,text="PRODUCTOS", bg="#719ae2")
         labelTituloCatalogo.pack(expand=True,fill="both")
         labelTituloCatalogo.config(font=self.letra, fg="black")
-        frmContenidoProductos=tk.Frame(frameProductos)
-        frmContenidoProductos.pack(expand=True,fill="both")
-        frmContenidoProductos.config(bg="#719ae2")
+        self.frmContenidoProductos=tk.Frame(frameProductos)
+        self.frmContenidoProductos.pack(expand=True,fill="both")
+        self.frmContenidoProductos.config(bg="#719ae2")
+        self.confirmar_mostrar_productos(self.frmContenidoProductos)
         
+    def confirmar_mostrar_productos(self,frmContenidoProductos):
+        
+        for widget in frmContenidoProductos.winfo_children():
+            widget.destroy()
+            
         lista_productos = self.objControlador.consultar_detalles_productos()
         imagenes = [
             "index/VISTA/imagenes/dolex.jpg",
@@ -296,7 +302,8 @@ class Interfaz:
 
                 lp = tk.Label(fProduct, text=str(producto[0]) + "\n" + str(producto[1]) + "\n" + str(producto[2]), bg="#ddffab")
                 lp.pack(expand=True, fill="both")
-                lp.config(bg="#aecef8", font=self.letra, fg="black")
+                letra_productos=("Georgia", 10, "bold")
+                lp.config(bg="#aecef8", font=letra_productos, fg="black")
             except Exception as e:
                 print(f"Error al cargar la imagen {imagenes[i]}: {e}")
 
@@ -316,10 +323,10 @@ class Interfaz:
         
     def crear_producto(self):
         self.letra = ("Georgia", 20, "bold")
-        self.ventana_crear = tk.Toplevel()  # Corrección aquí
+        self.ventana_crear = tk.Toplevel()
         self.ventana_crear.title("CREAR PRODUCTOS")
         self.ventana_crear.geometry('600x800')
-        self.ventana_crear.maxsize(600,800)# Corrección aquí
+        self.ventana_crear.maxsize(600,800)
           
         frameAgregar=tk.Frame(self.ventana_crear)
         frameAgregar.config(bg="#96c7e6",width=400,height=500)
@@ -359,8 +366,10 @@ class Interfaz:
         label_categoria=tk.Label(frameAdd , bg= "#96c7e6",text="Categoria")
         label_categoria.config(font=self.letra)
         label_categoria.pack(pady=5)
+        lista_categorias=["Medicamentos","Bebés","Belleza","Bienestar","Hogar"]
         self.categoria=tk.StringVar()
-        self.entry_categoria_crear=tk.Entry(frameAdd,textvariable=self.categoria)
+        self.categoria.set(lista_categorias[0])
+        self.entry_categoria_crear=tk.OptionMenu(frameAdd,self.categoria,*lista_categorias)
         self.entry_categoria_crear.pack(pady=5)
         
         label_detalles=tk.Label(frameAdd , bg= "#96c7e6",text="Detalles")
@@ -387,7 +396,7 @@ class Interfaz:
         nombre=self.entry_nombre_crear.get()
         cantidad_existencia=self.entrycantidadE_crear.get()
         cantidad_vendida=self.entry_cantidadV_crear.get()
-        categoria=self.entry_categoria_crear.get()
+        categoria=self.categoria.get()
         detalles=self.entry_detalles_crear.get()
         precio=self.entry_precio_crear.get()
         
@@ -406,6 +415,7 @@ class Interfaz:
             listaProductos=[nombre,cantidad_existencia,cantidad_vendida,categoria,detalles,precio]
             self.objControlador.crear_producto(listaProductos)
             self.ventana_crear.withdraw()
+            self.confirmar_mostrar_productos(self.frmContenidoProductos)
             messagebox.showinfo("Éxito","Producto registrado correctamente")
         except Exception as e:
             messagebox.showerror("Error", f"Error al registrar el producto {e}")
@@ -451,6 +461,7 @@ class Interfaz:
                     self.objControlador.eliminar_producto(id)
                     self.vaciar_tabla_eliminar()
                     self.cargar_productos_treeview_eliminar()
+                    self.confirmar_mostrar_productos(self.frmContenidoProductos)
                     messagebox.showinfo("Acción Realizada Exitosamente", "Producto eliminado con éxito")
                 else:
                     messagebox.showerror("Error", "No se puede eliminar el producto con ID 0")
@@ -630,9 +641,10 @@ class Interfaz:
             datos_modificados = [id_producto,nombre,cantidadesE,cantidadesV,categoria,detalles, precio ]
             resultado = self.objControlador.modificar_producto(datos_modificados)
             if resultado is True:
-                tk.messagebox.showinfo("Éxito", "El producto fue modificado exitosamente.")
                 self.vaciar_tabla()
                 self.cargar_productos_en_treeview()
+                self.confirmar_mostrar_productos(self.frmContenidoProductos)
+                tk.messagebox.showinfo("Éxito", "El producto fue modificado exitosamente.")
             else:
                 tk.messagebox.showerror("Error", "Hubo un problema al modificar el producto.")
         except ValueError as e:
