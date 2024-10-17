@@ -254,3 +254,8 @@ class Contenido:
         self.contactoDrogueria = self.interface_pictures("index/VISTA/imagenes/contacto_haybet_salud.jpeg", 550, 450)
         labelImagen = tk.Label(frameContacto,bg="#719ae2", image=self.contactoDrogueria)
         labelImagen.place(relx=0.5, rely=0.01, relheight=0.98, relwidth=0.98, anchor="n")
+        
+    def interface_pictures(self,pic,ancho,altura):
+            image= Image.open(pic).resize((ancho,altura))
+            img=ImageTk.PhotoImage(image)
+            return img

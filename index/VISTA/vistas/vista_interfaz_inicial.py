@@ -2,17 +2,15 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 from PIL import ImageTk, Image
+from vista_login import Login
+from vista_contenido import Contenido
 
 class Interfaz:
     def __init__(self,objControlador):
         self.objControlador=objControlador
-        self.ventanaLogin=None
-        self.nombreUsuario=None
-        self.documentoUsuario=None
         self.ventana_crear=None
         self.ventana_eliminar=None
         self.ventana_modificar=None
-        self.cargoUsuario=None
         self.logo=None
         self.reproducir=None
         self.pastilla=None
@@ -27,14 +25,15 @@ class Interfaz:
         self.image6=None
         self.image7=None
         self.image8=None
-        self.images=None
         self.homeDrogueria=None
         self.contactoDrogueria=None
         self.letra=None
         self.cargo=None
         self.categoria_seleccionada=None
+        self.vista_login=Login
+        self.vista_contenido=Contenido
 
-            
+        self.vista_login.ventana_ingreso(self.objControlador)
             
     def ventana_home(self):
         

@@ -6,15 +6,19 @@ from PIL import ImageTk, Image
 class Login:
         
     def __init__(self):
-        None
+        self.ventanaLogin=None
+        self.imagen_login=None
+        self.nombreUsuario=None
+        self.documentoUsuario=None
+        self.cargoUsuario=None
     
-    def ventana_ingreso(self):
+    def ventana_ingreso(self,objControlador):
         self.ventanaLogin=tk.Tk()
         self.ventanaLogin.geometry("600x800")
         self.ventanaLogin.maxsize(600,650)
         self.ventanaLogin.title("INICIO SESION HAYBET SALUD")
         self.letra=("Georgia", 20, "bold")
-        self.images = self.interface_pictures(r"index\VISTA\imagenes\pastillas.jpg", 210, 150)
+        self.imagen_login = self.interface_pictures(r"index\VISTA\imagenes\pastillas.jpg", 210, 150)
 
         frameInicioSesion=tk.Frame(self.ventanaLogin)
         frameInicioSesion.config(bg="#96c7e6",width=400,height=500)
@@ -29,7 +33,7 @@ class Login:
         frameLogin=tk.Frame(frameInicioSesion, bg="#96c7e6")
         frameLogin.place(relx=0.5,rely=0.25,relheight=0.7, relwidth=0.65, anchor="n")
         
-        LabelImagenLogin=tk.Label(frameInicioSesion,image=self.images)
+        LabelImagenLogin=tk.Label(frameInicioSesion,image=self.imagen_login)
         LabelImagenLogin.grid()
         
         labelNombre=tk.Label(frameLogin, bg= "#96c7e6",text="Nombre")
@@ -57,11 +61,11 @@ class Login:
         botonVendedor=tk.Radiobutton(frameRol,variable=self.cargoUsuario, text="Vendedor",value="Vendedor")
         botonVendedor.grid(column=1, row=0, pady=5, padx=7)
         
-        botonIngresar=tk.Button(frameLogin,text="Iniciar sesion",command=self.funcion_ingresar, bg="#d6022a")
+        botonIngresar=tk.Button(frameLogin,text="Iniciar sesion",command=self.funcion_ingresar(objControlador), bg="#d6022a")
         botonIngresar.config(font=self.letra, fg="white")
         botonIngresar.pack(pady=15)
         
-    def funcion_ingresar(self):
+    def funcion_ingresar(self,objControlador):
         try:
             nombre=self.nombreUsuario.get()
             documento=self.documentoUsuario.get()
@@ -83,7 +87,7 @@ class Login:
             listaUsuario=[documento,nombre,x,self.cargo]
             
             try:
-                    validacion_usuario=self.objControlador.validar_inicio_sesion(listaUsuario)
+                    validacion_usuario=objControlador.validar_inicio_sesion(listaUsuario)
                     if validacion_usuario is True:
                         self.ventanaLogin.withdraw()
                         self.ventana_home()
@@ -95,3 +99,8 @@ class Login:
 
         except ValueError as e:
             messagebox.showerror("Error",str(e))
+            
+    def interface_pictures(self,pic,ancho,altura):
+        image= Image.open(pic).resize((ancho,altura))
+        img=ImageTk.PhotoImage(image)
+        return img
