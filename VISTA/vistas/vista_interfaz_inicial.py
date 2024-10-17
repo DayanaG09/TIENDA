@@ -2,8 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 from PIL import ImageTk, Image
-from vista_login import Login
-from vista_contenido import Contenido
+from VISTA.vistas.vista_login import Login
+from VISTA.vistas.vista_contenido import Contenido
 
 class Interfaz:
     def __init__(self,objControlador):
