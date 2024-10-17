@@ -1,5 +1,3 @@
-import json
-
 class Producto:
     
     def __init__(self,conexion):
@@ -11,7 +9,6 @@ class Producto:
         self.categoria=None
         self.detalles=None
         self.precio=None
-        self.nombreArchivo=None
         
     ## LLave primaria o codigo identificador del producto
     def get_id_producto(self):
@@ -57,20 +54,22 @@ class Producto:
         self.set_categoria(listaProductos[4])
         self.set_detalles(listaProductos[5])
         self.set_precio(listaProductos[6])
+        
+    def set_producto2(self,listaProductos):
+        self.set_nombre(listaProductos[0])
+        self.set_existencia(listaProductos[1])
+        self.set_cantidades_vendidas(listaProductos[2])
+        self.set_categoria(listaProductos[3])
+        self.set_detalles(listaProductos[4])
+        self.set_precio(listaProductos[5])
             
   ###REGISTRAR PRODUCTOS   
     def crear_producto (self):
         cursor = self.conexion.cursor()
-                
-        #PARA OBTENER LA FECHA ACTUAL - SE USARÁ EN LA VISTA
-        #fecha_actual = datetime.now()
-        #fecha_formateada = fecha_actual.strftime('%Y-%m-%d %H:%M:%S')
-        #from datetime import datetime
         
         try:
-            cursor.execute("INSERT INTO producto (nombre__producto,cantidad_existencia,cantidad_vendidas, Id_categoria, detalles,precio_products) VALUES (%s,%s,%s,%s,%s,%s)", (self.nombre,self.existencia,self.cantidadesVendidas,self.categoria,self.detalles,self.precio))
+            cursor.execute("INSERT INTO producto (nombre__producto,cantidad_existencia,cantidad_vendidas, categoria, detalles,precio_producto) VALUES (%s,%s,%s,%s,%s,%s)", (self.nombre,self.existencia,self.cantidadesVendidas,self.categoria,self.detalles,self.precio))
             self.conexion.commit()
-            print("Datos Guardados con exito")
         except Exception as e:
             print(f"Erro al guardar los datos:{e}")
         finally:
@@ -82,11 +81,10 @@ class Producto:
             cursor.execute("""
                 UPDATE producto
                 SET nombre__producto=%s, cantidad_existencia=%s, cantidad_vendidas=%s, 
-                    Id_categoria=%s, detalles=%s, precio_producto=%s 
+                    categoria=%s, detalles=%s, precio_producto=%s 
                 WHERE Id_producto=%s
                 """, (self.nombre,self.existencia,self.cantidadesVendidas,self.categoria,self.detalles,self.precio,self.idProducto))
             self.conexion.commit()
-            print("Producto modificado con éxito")
             return True
         except Exception as e:
             print(f"Error al modificar el producto: {e}")
@@ -99,7 +97,6 @@ class Producto:
         try:
             cursor.execute("DELETE FROM producto WHERE Id_producto=%s", (self.idProducto,))
             self.conexion.commit()
-            print("Producto eliminado con éxito")
             return True
         except Exception as e:
             print(f"Error al eliminar el producto: {e}")
@@ -126,37 +123,38 @@ class Producto:
         finally:
             cursor.close()
             
-    def consultar_producto(self): #este metodo debe consultar el producto indicado por el usuario
+    def consultar_detalles_productos(self):
         cursor = self.conexion.cursor()
         try:
-            cursor.execute("SELECT * FROM producto")
+            cursor.execute("SELECT producto.nombre__producto,producto.detalles, producto.precio_producto, producto.categoria FROM producto")
             consulta = cursor.fetchall()
-            self.set_producto(consulta)
+            return consulta
         except Exception as e:
-            print(f"Error al consultar los productos: {e}")
+            print(f"Error al consultar los productos más vendidos: {e}")
+            return None
         finally:
             cursor.close()
-    
-##GENERAR INFORME
-    def get_nombreArchivo(self):
-        return self.nombreArchivo
-    
-    def set_nombre_archivo(self,auxNombre):
-        self.nombreArchivo=auxNombre
-        
-    def crear_archivo(self,lista_productos,datoTitulo):
-        nombreArchivo=datoTitulo+".txt"
-        with open(nombreArchivo, 'w', encoding='utf-8') as archivo:
-            json.dump(lista_productos, archivo)
-        return nombreArchivo
-    
-    def leer_archivo(self,auxArchivo):
-        with open(auxArchivo,"r") as archivo:
-            datoContenido=archivo.read()
-            print(datoContenido)
-            archivo.close()
             
-    def deserializar(self,nombreArchivo):
-        with open(nombreArchivo+".txt","r") as archivo:
-            datoCreado=json.load(archivo)
-        return datoCreado
+    def consultar_productos_masVendidos(self): #este metodo debe consultar el producto indicado por el usuario
+        cursor = self.conexion.cursor()
+        try:
+            cursor.execute("SELECT producto.nombre__producto, producto.cantidad_vendidas FROM producto ORDER BY producto.cantidad_vendidas DESC LIMIT 4")
+            consulta = cursor.fetchall()
+            return consulta
+        except Exception as e:
+            print(f"Error al consultar los productos más vendidos: {e}")
+            return None
+        finally:
+            cursor.close()
+            
+    def consultar_productos_menosVendidos(self):
+        cursor = self.conexion.cursor()
+        try:
+            cursor.execute("SELECT producto.nombre__producto, producto.cantidad_vendidas FROM producto ORDER BY producto.cantidad_vendidas ASC LIMIT 4")
+            consulta = cursor.fetchall()
+            return consulta
+        except Exception as e:
+            print(f"Error al consultar los productos más vendidos: {e}")
+            return None
+        finally:
+            cursor.close()
