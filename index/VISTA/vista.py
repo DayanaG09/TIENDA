@@ -30,8 +30,10 @@ class Interfaz:
         self.image8=None
         self.images=None
         self.homeDrogueria=None
+        self.contactoDrogueria=None
         self.letra=None
         self.cargo=None
+        self.categoria_seleccionada=None
 
     def ventana_ingreso(self):
         self.ventanaLogin=tk.Tk()
@@ -181,7 +183,7 @@ class Interfaz:
         nombre=tk.Label(frameTituloEmpresa,bg="white", text="DROGUERÍA HAYBET" , font=("Georgia",20 , "bold") , fg="#d6022a")
         nombre.config(width=30,height=10)
         nombre.pack(expand=True)
-        self.logo=self.interface_pictures("index/VISTA/imagenes/logo_drogueriaHaybet.png",160,150)
+        self.logo=self.interface_pictures("index/VISTA/imagenes/logo_haybet_salud.jpeg",160,150)
         LabelImagenEncabezado=tk.Label(frameEncabezado,image=self.logo)
         LabelImagenEncabezado.config(bg="white")
         LabelImagenEncabezado.place(relx=0.86,rely=0.05,relheight=0.9,relwidth=0.24,anchor="n")
@@ -224,16 +226,21 @@ class Interfaz:
         frameCategorias=tk.Frame(frameContenido, bg="#a5ccf1")
         frameCategorias.place(relx=0.605,rely=0.02,relheight=0.1, relwidth=0.77,anchor="n")
         frameCategorias.config(bg="#a5ccf1")
-        botonC1=tk.Button(frameCategorias, text="Medicamentos", font=("Georgia",8, "bold"),bg="white", fg="#719ae2")
+        botonC1=tk.Button(frameCategorias, text="Medicamentos", font=("Georgia",8, "bold"),bg="white", fg="#719ae2",command=lambda:self.seleccionar_categoria("Medicamentos"))
         botonC1.place(relx=0.1,rely=0.2,relheight=0.6, relwidth=0.18,anchor="n")
-        botonC2=tk.Button(frameCategorias, text="Bebés", font=("Georgia",8, "bold"),bg="white", fg="#719ae2")
+        botonC2=tk.Button(frameCategorias, text="Bebés", font=("Georgia",8, "bold"),bg="white", fg="#719ae2",command=lambda:self.seleccionar_categoria("Bebés"))
         botonC2.place(relx=0.3,rely=0.2,relheight=0.6, relwidth=0.18,anchor="n")
-        botonC3=tk.Button(frameCategorias, text="Belleza", font=("Georgia",8, "bold") ,bg="white", fg="#719ae2")
+        botonC3=tk.Button(frameCategorias, text="Belleza", font=("Georgia",8, "bold") ,bg="white", fg="#719ae2",command=lambda:self.seleccionar_categoria("Belleza"))
         botonC3.place(relx=0.5,rely=0.2,relheight=0.6, relwidth=0.18,anchor="n")
-        botonC4=tk.Button(frameCategorias, text="Bienestar", font=("Georgia",8, "bold"),bg="white", fg="#719ae2")
+        botonC4=tk.Button(frameCategorias, text="Bienestar", font=("Georgia",8, "bold"),bg="white", fg="#719ae2",command=lambda:self.seleccionar_categoria("Bienestar"))
         botonC4.place(relx=0.7,rely=0.2,relheight=0.6, relwidth=0.18,anchor="n")
-        botonC5=tk.Button(frameCategorias, text="Hogar",bg="white",  font=("Georgia",8, "bold"), fg="#719ae2")
+        botonC5=tk.Button(frameCategorias, text="Hogar",bg="white",  font=("Georgia",8, "bold"), fg="#719ae2",command=lambda:self.seleccionar_categoria("Hogar"))
         botonC5.place(relx=0.9,rely=0.2,relheight=0.6, relwidth=0.18,anchor="n")
+        
+    def seleccionar_categoria(self,categoria):
+        self.categoria_seleccionada=categoria
+        self.confirmar_mostrar_productos(self.frmContenidoProductos)
+        
         
     def mostrar_home(self, frameContenido):
         frameHome = tk.Frame(frameContenido)
@@ -241,8 +248,7 @@ class Interfaz:
         frameHome.config(bg="#719ae2")
         frameImagen = tk.Frame(frameHome, bg="#719ae2")
         frameImagen.place(relx=0.5, rely=0.02, relheight=0.65, relwidth=0.96, anchor="n")
-        
-        self.homeDrogueria = self.interface_pictures("index/VISTA/imagenes/contacto_drogueria.png", 320, 280)
+        self.homeDrogueria = self.interface_pictures("index/VISTA/imagenes/farmaceutica.png", 320, 280)
         labelImagen = tk.Label(frameImagen,bg="#719ae2", image=self.homeDrogueria)
         labelImagen.place(relx=0.5, rely=0.01, relheight=0.98, relwidth=0.98, anchor="n")
         
@@ -266,6 +272,7 @@ class Interfaz:
         self.frmContenidoProductos=tk.Frame(frameProductos)
         self.frmContenidoProductos.pack(expand=True,fill="both")
         self.frmContenidoProductos.config(bg="#719ae2")
+        self.categoria_seleccionada=None
         self.confirmar_mostrar_productos(self.frmContenidoProductos)
         
     def confirmar_mostrar_productos(self,frmContenidoProductos):
@@ -274,23 +281,15 @@ class Interfaz:
             widget.destroy()
             
         lista_productos = self.objControlador.consultar_detalles_productos()
-        imagenes = [
-            "index/VISTA/imagenes/dolex.jpg",
-            "index/VISTA/imagenes/bebe.jpg",
-            "index/VISTA/imagenes/belleza.jpg",
-            "index/VISTA/imagenes/mieltertos.jpg",
-            "index/VISTA/imagenes/benet.png",
-            "index/VISTA/imagenes/bebe2.png",
-            "index/VISTA/imagenes/hogar.png",
-            "index/VISTA/imagenes/mieltertos2.jpg",
-            "index/VISTA/imagenes/bebe1.jpg"
-        ]
-        
+        ruta_imagen_productos = "index/VISTA/imagenes/logo_productos.jpg"
         self.imagenes = []
+        
+        if self.categoria_seleccionada:
+            lista_productos=[p for p in lista_productos if p[3]==self.categoria_seleccionada]
 
         for i, producto in enumerate(lista_productos):
             try:
-                imagen = self.interface_pictures(imagenes[i], 100, 50)
+                imagen = self.interface_pictures(ruta_imagen_productos, 100, 50)
                 self.imagenes.append(imagen)
                 fProduct = tk.Frame(frmContenidoProductos, bg="#59baa9")
                 fProduct.place(relx=(i % 3) * 0.3 + 0.2, rely=(i // 3) * 0.3 + 0.05, relheight=0.25, relwidth=0.25, anchor="n")
@@ -305,7 +304,7 @@ class Interfaz:
                 letra_productos=("Georgia", 10, "bold")
                 lp.config(bg="#aecef8", font=letra_productos, fg="black")
             except Exception as e:
-                print(f"Error al cargar la imagen {imagenes[i]}: {e}")
+                print(f"Error al cargar la imagen por categoria {imagen[i]}: {e}")
 
         if self.cargo=="Administrador":
             botonAdd=tk.Button(frmContenidoProductos,text="Agregar Producto", command=lambda:self.crear_producto( )) 
@@ -808,10 +807,13 @@ class Interfaz:
         messagebox.showinfo("Archivo creado", "Tu informe ha sido generado correctamente")
         
     def mostrar_contacto(self,frameContenido):
-        #CONTACTO:
-        #-contactanos al : numero, redes sociales
-        #-horario de atencion
-        None
+        frameContacto = tk.Frame(frameContenido)
+        frameContacto.place(relx=0.605, rely=0.13, relheight=0.85, relwidth=0.77, anchor="n")
+        frameContacto.config(bg="#719ae2")
+        
+        self.contactoDrogueria = self.interface_pictures("index/VISTA/imagenes/contacto_haybet_salud.jpeg", 550, 450)
+        labelImagen = tk.Label(frameContacto,bg="#719ae2", image=self.contactoDrogueria)
+        labelImagen.place(relx=0.5, rely=0.01, relheight=0.98, relwidth=0.98, anchor="n")
         
     def crear_pie_pagina(self,framePrincipal):
         framePiePagina=tk.Frame(framePrincipal, bg="#8bb3e9")

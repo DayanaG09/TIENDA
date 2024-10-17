@@ -1,10 +1,9 @@
 import json
 from datetime import datetime
 class Controlador:
-    def __init__(self,objModeloUsuario,objModeloProducto,objModeloCategoria):
+    def __init__(self,objModeloUsuario,objModeloProducto):
         self.objModeloUsuario=objModeloUsuario
         self.objModeloProducto=objModeloProducto
-        self.objModeloCategoria=objModeloCategoria
         
     def validar_inicio_sesion(self,listaUsuario):
         listaUsuarioDatos=listaUsuario
@@ -52,18 +51,6 @@ class Controlador:
     def consultar_detalles_productos(self):
         listaDetalles=self.objModeloProducto.consultar_detalles_productos()
         return listaDetalles
-    
-    def consulta_categoria(self,categoria):
-        self.objModeloCategoria.set_id(categoria)
-        self.objModeloCategoria.consulta_categoria()
-        categoria_nueva=self.objModeloCategoria.get_id()
-        return categoria_nueva
-        
-    def consultar_categoria(self):
-        consulta_categoria=self.objModeloCategoria.consultar_categorias()
-        return consulta_categoria
-    
-    
         
     def crear_archivo(self):
         fecha_actual = datetime.now()

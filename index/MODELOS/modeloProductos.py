@@ -126,7 +126,7 @@ class Producto:
     def consultar_detalles_productos(self):
         cursor = self.conexion.cursor()
         try:
-            cursor.execute("SELECT producto.nombre__producto,producto.detalles, producto.precio_producto FROM producto")
+            cursor.execute("SELECT producto.nombre__producto,producto.detalles, producto.precio_producto, producto.categoria FROM producto")
             consulta = cursor.fetchall()
             return consulta
         except Exception as e:
