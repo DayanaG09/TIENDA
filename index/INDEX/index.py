@@ -1,7 +1,7 @@
 from MODELOS.basededatos import crearConexion
 from MODELOS.modeloProductos import Producto
 from MODELOS.modeloUsuario import Usuario
-from VISTA.vista import Interfaz
+from index.VISTA.vistas.vista_interfaz_inicial import Interfaz
 from CONTROLADOR.controlador import Controlador
 conexion=crearConexion()
 objProducto=Producto(conexion)
