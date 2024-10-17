@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import messagebox
 from tkinter import ttk
 from PIL import ImageTk, Image
+from VISTA.vistas.botones_productos import BotonesProducto
 
 class Contenido:
     
