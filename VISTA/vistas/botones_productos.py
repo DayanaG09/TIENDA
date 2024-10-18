@@ -5,8 +5,59 @@ from PIL import ImageTk, Image
 
 class BotonesProducto:
     
-    def __init__(self):
-        None
+    def __init__(self,objControlador,cargo,frmContenidoProductos):
+        self.ventana_crear=None
+        self.ventana_eliminar=None
+        self.ventana_modificar=None
+        self.frmContenidoProductos=frmContenidoProductos
+        self.cargo=cargo
+        self.objControlador=objControlador
+        
+    def confirmar_mostrar_productos(self,categoria_seleccionada):
+        
+        self.categoria_seleccionada=categoria_seleccionada
+        
+        for widget in self.frmContenidoProductos.winfo_children():
+            widget.destroy()
+            
+        lista_productos = self.objControlador.consultar_detalles_productos()
+        ruta_imagen_productos = "VISTA/imagenes/logo_productos.jpg"
+        self.imagenes = []
+        
+        if self.categoria_seleccionada:
+            lista_productos=[p for p in lista_productos if p[3]==self.categoria_seleccionada]
+
+        for i, producto in enumerate(lista_productos):
+            try:
+                imagen = self.interface_pictures(ruta_imagen_productos, 100, 50)
+                self.imagenes.append(imagen)
+                fProduct = tk.Frame(self.frmContenidoProductos, bg="#59baa9")
+                fProduct.place(relx=(i % 3) * 0.3 + 0.2, rely=(i // 3) * 0.3 + 0.05, relheight=0.25, relwidth=0.25, anchor="n")
+                fProduct.config(bg="#719ae2")
+
+                LImagen = tk.Label(fProduct, image=imagen)
+                LImagen.pack(expand=True, fill="both")
+                LImagen.config(bg="#719ae2")
+
+                lp = tk.Label(fProduct, text=str(producto[0]) + "\n" + str(producto[1]) + "\n" + str(producto[2]), bg="#ddffab")
+                lp.pack(expand=True, fill="both")
+                letra_productos=("Georgia", 10, "bold")
+                lp.config(bg="#aecef8", font=letra_productos, fg="black")
+            except Exception as e:
+                print(f"Error al cargar la imagen por categoria {imagen[i]}: {e}")
+
+        if self.cargo=="Administrador": 
+            botonAdd=tk.Button(self.frmContenidoProductos,text="Agregar Producto", command=lambda:self.crear_producto()) 
+            botonAdd.place(relx=0.5,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
+            botonAdd.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
+            
+            botonActualizar=tk.Button(self.frmContenidoProductos,text="Actualizar producto", command=lambda: self.modificar_producto()) 
+            botonActualizar.place(relx=0.67,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
+            botonActualizar.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
+            
+            botonDelete=tk.Button(self.frmContenidoProductos,text="Eliminar Producto", command=lambda: self.eliminar_producto()) 
+            botonDelete.place(relx=0.84,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
+            botonDelete.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
     
     def crear_producto(self):
         self.letra = ("Georgia", 20, "bold")
@@ -102,7 +153,7 @@ class BotonesProducto:
             listaProductos=[nombre,cantidad_existencia,cantidad_vendida,categoria,detalles,precio]
             self.objControlador.crear_producto(listaProductos)
             self.ventana_crear.withdraw()
-            self.confirmar_mostrar_productos(self.frmContenidoProductos)
+            self.confirmar_mostrar_productos(self.categoria_seleccionada)
             messagebox.showinfo("Éxito","Producto registrado correctamente")
         except Exception as e:
             messagebox.showerror("Error", f"Error al registrar el producto {e}")
@@ -148,7 +199,7 @@ class BotonesProducto:
                     self.objControlador.eliminar_producto(id)
                     self.vaciar_tabla_eliminar()
                     self.cargar_productos_treeview_eliminar()
-                    self.confirmar_mostrar_productos(self.frmContenidoProductos)
+                    self.confirmar_mostrar_productos(self.categoria_seleccionada)
                     messagebox.showinfo("Acción Realizada Exitosamente", "Producto eliminado con éxito")
                 else:
                     messagebox.showerror("Error", "No se puede eliminar el producto con ID 0")
@@ -330,9 +381,15 @@ class BotonesProducto:
             if resultado is True:
                 self.vaciar_tabla()
                 self.cargar_productos_en_treeview()
-                self.confirmar_mostrar_productos(self.frmContenidoProductos)
+                self.confirmar_mostrar_productos(self.categoria_seleccionada)
+                self.ventana_modificar.withdraw()
                 tk.messagebox.showinfo("Éxito", "El producto fue modificado exitosamente.")
             else:
                 tk.messagebox.showerror("Error", "Hubo un problema al modificar el producto.")
         except ValueError as e:
                 messagebox.showerror("Error",f"El producto no se pudo modificar: {e}")
+                
+    def interface_pictures(self,pic,ancho,altura):
+            image= Image.open(pic).resize((ancho,altura))
+            img=ImageTk.PhotoImage(image)
+            return img

@@ -6,13 +6,15 @@ from VISTA.vistas.botones_productos import BotonesProducto
 
 class Contenido:
     
-    def __init__(self):
-        None
-    
-    def seleccionar_categoria(self,categoria):
-        self.categoria_seleccionada=categoria
-        self.confirmar_mostrar_productos(self.frmContenidoProductos)
+    def __init__(self,objControlador,cargo):
+        self.homeDrogueria=None
+        self.contactoDrogueria=None
+        self.objControlador=objControlador
+        self.cargo=cargo
+        self.categoria_seleccionada=None
         
+    def seleccionar_categoria(self,categoria):
+            self.objBotonesProducto.confirmar_mostrar_productos(categoria)
         
     def mostrar_home(self, frameContenido):
         frameHome = tk.Frame(frameContenido)
@@ -20,7 +22,7 @@ class Contenido:
         frameHome.config(bg="#719ae2")
         frameImagen = tk.Frame(frameHome, bg="#719ae2")
         frameImagen.place(relx=0.5, rely=0.02, relheight=0.65, relwidth=0.96, anchor="n")
-        self.homeDrogueria = self.interface_pictures("index/VISTA/imagenes/farmaceutica.png", 320, 280)
+        self.homeDrogueria = self.interface_pictures("VISTA/imagenes/farmaceutica.png", 320, 280)
         labelImagen = tk.Label(frameImagen,bg="#719ae2", image=self.homeDrogueria)
         labelImagen.place(relx=0.5, rely=0.01, relheight=0.98, relwidth=0.98, anchor="n")
         
@@ -44,52 +46,8 @@ class Contenido:
         self.frmContenidoProductos=tk.Frame(frameProductos)
         self.frmContenidoProductos.pack(expand=True,fill="both")
         self.frmContenidoProductos.config(bg="#719ae2")
-        self.categoria_seleccionada=None
-        self.confirmar_mostrar_productos(self.frmContenidoProductos)
-        
-    def confirmar_mostrar_productos(self,frmContenidoProductos):
-        
-        for widget in frmContenidoProductos.winfo_children():
-            widget.destroy()
-            
-        lista_productos = self.objControlador.consultar_detalles_productos()
-        ruta_imagen_productos = "index/VISTA/imagenes/logo_productos.jpg"
-        self.imagenes = []
-        
-        if self.categoria_seleccionada:
-            lista_productos=[p for p in lista_productos if p[3]==self.categoria_seleccionada]
-
-        for i, producto in enumerate(lista_productos):
-            try:
-                imagen = self.interface_pictures(ruta_imagen_productos, 100, 50)
-                self.imagenes.append(imagen)
-                fProduct = tk.Frame(frmContenidoProductos, bg="#59baa9")
-                fProduct.place(relx=(i % 3) * 0.3 + 0.2, rely=(i // 3) * 0.3 + 0.05, relheight=0.25, relwidth=0.25, anchor="n")
-                fProduct.config(bg="#719ae2")
-
-                LImagen = tk.Label(fProduct, image=imagen)
-                LImagen.pack(expand=True, fill="both")
-                LImagen.config(bg="#719ae2")
-
-                lp = tk.Label(fProduct, text=str(producto[0]) + "\n" + str(producto[1]) + "\n" + str(producto[2]), bg="#ddffab")
-                lp.pack(expand=True, fill="both")
-                letra_productos=("Georgia", 10, "bold")
-                lp.config(bg="#aecef8", font=letra_productos, fg="black")
-            except Exception as e:
-                print(f"Error al cargar la imagen por categoria {imagen[i]}: {e}")
-
-        if self.cargo=="Administrador":
-            botonAdd=tk.Button(frmContenidoProductos,text="Agregar Producto", command=lambda:self.crear_producto( )) 
-            botonAdd.place(relx=0.5,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
-            botonAdd.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
-            
-            botonActualizar=tk.Button(frmContenidoProductos,text="Actualizar producto", command=lambda: self.modificar_producto()) 
-            botonActualizar.place(relx=0.67,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
-            botonActualizar.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
-            
-            botonDelete=tk.Button(frmContenidoProductos,text="Eliminar Producto", command=lambda: self.eliminar_producto()) 
-            botonDelete.place(relx=0.84,rely=0.92,relheight=0.06,relwidth=0.17,anchor="n")
-            botonDelete.config( bg="#d6022a", font=("Georgia",7, "bold"), fg="white")
+        self.objBotonesProducto=BotonesProducto(self.objControlador,self.cargo,self.frmContenidoProductos)
+        self.objBotonesProducto.confirmar_mostrar_productos(self.categoria_seleccionada)
         
     def mostrar_informes(self,frameContenido):
         self.letra=("Georgia",10, "bold")
@@ -252,7 +210,7 @@ class Contenido:
         frameContacto.place(relx=0.605, rely=0.13, relheight=0.85, relwidth=0.77, anchor="n")
         frameContacto.config(bg="#719ae2")
         
-        self.contactoDrogueria = self.interface_pictures("index/VISTA/imagenes/contacto_haybet_salud.jpeg", 550, 450)
+        self.contactoDrogueria = self.interface_pictures("VISTA/imagenes/contacto_haybet_salud.jpeg", 550, 450)
         labelImagen = tk.Label(frameContacto,bg="#719ae2", image=self.contactoDrogueria)
         labelImagen.place(relx=0.5, rely=0.01, relheight=0.98, relwidth=0.98, anchor="n")
         
