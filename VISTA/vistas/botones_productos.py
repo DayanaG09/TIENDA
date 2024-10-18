@@ -160,7 +160,7 @@ class BotonesProducto:
     
     def eliminar_producto(self):
         self.letra = ("Georgia", 12, "bold")
-        self.ventana_eliminar = tk.Toplevel()  # Corrección aquí
+        self.ventana_eliminar = tk.Toplevel()
         self.ventana_eliminar.title("ELIMINAR PRODUCTOS")
         self.ventana_eliminar.geometry('500x600')
 
@@ -215,9 +215,6 @@ class BotonesProducto:
         self.crear_titulo_modificar()
         self.crear_treeview()
         self.crear_formulario_modificar()
-
-    def actualizar_treeview(self):
-        None
     
     def crear_titulo_modificar(self):
         frameTitulo = tk.Frame(self.ventana_modificar)
